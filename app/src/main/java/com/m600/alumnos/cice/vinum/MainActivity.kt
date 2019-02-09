@@ -2,6 +2,8 @@ package com.m600.alumnos.cice.vinum
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 
@@ -25,8 +27,8 @@ class MainActivity : AppCompatActivity() {
         override fun onDataChange(p0: DataSnapshot) {
 
             // Devuelve todos los vinos como ArrayList<Vino>?
-            BD_vinos.cargarVinos(p0)
-
+            val a = BD_vinos.cargarVinos(p0)
+            Log.i("KEVINLOG","${a!![2].puntuaciones}")
             //taskList!!.add(BD_vinos)
             //adapter.notifyDataSetChanged()
         }
@@ -42,15 +44,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+
         // [-----------------<| BD FIREBASE |>-----------------] //
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true) //Cache
         FirebaseBD = FirebaseDatabase.getInstance().reference //Se obtiene la referencia
-
-
-
-        FirebaseBD.setValue("Hello, World!")
-// [---------------------------------------------------] //
+        BD_vinos = BD()
+        FirebaseBD.orderByKey().addValueEventListener(taskListener)
+        // [---------------------------------------------------] //
 
 
 }

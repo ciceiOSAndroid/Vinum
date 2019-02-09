@@ -19,31 +19,47 @@ class BD {
 
     fun cargarVinos(dataSnapshot: DataSnapshot):ArrayList<Vino>?{
 
-        var vinos:ArrayList<Vino> ?= null
+        // Se declara e incializar el array encargado de almacenar los objeto << Vino >>
+        val vinoObjects:ArrayList<Vino> ?= arrayListOf()
 
-        val tareas = dataSnapshot.children.iterator()
-        if(tareas.hasNext()){
+        val vinosFirebase = dataSnapshot.children.iterator()
+        if(vinosFirebase.hasNext()){
 
-            val listaIndex = tareas.next()
+            val listaIndex = vinosFirebase.next()
             val itemsIterator = listaIndex.children.iterator()
-            while (itemsIterator.hasNext()){
+            while (itemsIterator.hasNext()){ //Recorre todos los vinos
 
-                //Obtenemos la información
+                //Obtenemos la información de ellos
 
-                val tareaActual = itemsIterator.next()
+                val vinoActual = itemsIterator.next()
                 val vino = Vino()
 
-                val map = tareaActual.value as HashMap<String, Any>
-                vino.done = map["done"] as Boolean
-                vino.taskDesc = map["taskDesc"] as String
-                vino.objectId = tareaActual.key
+                val map = vinoActual.value as HashMap<String, Any>
 
-                vinos!!.add(vino)
+                vino.ID = vinoActual.key
+                vino.nombre = map["nombre"] as String
+                vino.anio = map["año"] as Long
+                vino.uva = map["uva"] as String
+                vino.grados = map["grados"] as String
+                vino.origen = map["origen"] as String
+                vino.bodega = map["bodega"] as String
+                vino.descripcion = map["descripcion"] as String
+                vino.imagen = map["imagen"] as String //URL
+
+                /* El vino puede no tener puntuaciones por lo que su atributo puede permanecer declarado
+                por defecto como null */
+                if(map["puntuaciones"]!=null){
+                    vino.puntuaciones = map["puntuaciones"] as HashMap<String, Int>
+                }
+
+
+                //Se añade el objeto Vino con sus propiedades
+                vinoObjects!!.add(vino)
             }
 
         }
 
-        return vinos
+        return vinoObjects
     }
 
 
