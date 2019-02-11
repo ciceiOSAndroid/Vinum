@@ -11,7 +11,7 @@ class Vino {
 
     }
 
-    var ID: String ?= null
+    //var ID: String ?= null
     var nombre: String ?= null
     var anio: Long ?= null
     var uva: String ?= null
