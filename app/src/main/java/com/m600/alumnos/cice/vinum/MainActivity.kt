@@ -90,12 +90,12 @@ class MainActivity : AppCompatActivity() {
         val vino = Vino()
 
         //Se añaden al menos sus elementos obligatorios
-        vino.nombre = "CUEVA DEL CHAMAN ROBLlE"
+        vino.nombre = "CUEVA DEL CHAMAN ROBLE"
         vino.anio = 2000
         vino.bodega = "Prueba"
-        vino.uva = "Lol"
-        vino.origen = "España"
-        vino.descripcion = "dfksjdfksdfjksdjkfknsdf"
+        vino.uva = "Prueba"
+        vino.origen = "Prueba"
+        vino.descripcion = "Prueba"
 
         val resultado = BD_vinos.guardarVino(FirebaseBD,vino)
 
