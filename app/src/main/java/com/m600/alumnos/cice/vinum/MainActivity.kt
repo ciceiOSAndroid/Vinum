@@ -6,6 +6,9 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
+import android.os.StrictMode
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,7 +58,9 @@ class MainActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this) //BD FIREBASE
         setContentView(R.layout.activity_main)
 
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
 
+        StrictMode.setThreadPolicy(policy)
 
 
         // [-----------------<| BD FIREBASE |>-----------------] //
@@ -85,23 +90,23 @@ class MainActivity : AppCompatActivity() {
         val vino = Vino()
 
         //Se añaden al menos sus elementos obligatorios
-        vino.nombre = " "
+        vino.nombre = "CUEVA DEL CHAMAN ROBLlE"
         vino.anio = 2000
         vino.bodega = "Prueba"
         vino.uva = "Lol"
         vino.origen = "España"
         vino.descripcion = "dfksjdfksdfjksdjkfknsdf"
 
-
+        val resultado = BD_vinos.guardarVino(FirebaseBD,vino)
             //Si al añadir un vino este se añade satisfactoriamente
-        if(BD_vinos.guardarVino(FirebaseBD,vino)){
+        if(resultado.second){
 
-            Toast.makeText(this@MainActivity,"Se ha insertado correctamente",Toast.LENGTH_LONG).show()
+            Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
 
             //Si se ha ocurrido un error o los datos son incorrectos
         }else{
 
-            Toast.makeText(this@MainActivity,"No se ha insertado",Toast.LENGTH_LONG).show()
+            Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
 
         }
 

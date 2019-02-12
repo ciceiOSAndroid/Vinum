@@ -1,12 +1,15 @@
 package com.m600.alumnos.cice.vinum
 
 import android.util.Log
-import android.view.View
-import android.widget.Toast
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import java.net.URL
 import java.util.*
+import org.json.JSONArray
+
+
+
+
 
 class BD {
 
@@ -89,15 +92,15 @@ class BD {
 
     /**
      * Se encarga de guardar los vinos en la base de datos, tambien comprueba que el vino a insertar
-     * tiene los atributos obligatorios por lo que devolverá PAIR  si el vino se ha insertado correctamente
-     * o FALSE si ha ocurrido algún error, [Utiliza el TAG "VINUMLOG" para ver que esta ocurriendo]
+     * tiene los atributos obligatorios, este devolverá un PAIR compuesto por un String que será
+     * el mensaje del proceso y un boolean para confirmar si el proceso se ha completado o ha ocurrido un error.
+     *
      *
      * [Elementos Obligatorios para guardar un vino]
      * - Nombre
      * - Origen
      * - Año
      * - Descripcion
-     * - Origen
      * - Bodega
      * [Elementos NO Obligatorios para guardar un vino]
      * - Uva
@@ -112,34 +115,42 @@ class BD {
      */
 
 
-    fun guardarVino(FirebaseBD: DatabaseReference, vino: Vino):Boolean{
+    fun guardarVino(FirebaseBD: DatabaseReference, vino: Vino):Pair<String, Boolean>{
 
         //Obtiene el año actual para comprobar que no se meta un año imposible
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
+        val resultado: Pair<String,Boolean>
+
         if(vino.nombre!!.isBlank()){
 
-            Log.i("VINUMLOG","El nombre no puede estar vacio")
+            Log.i("VINUMLOG","El nombre no puede estar vacío")
+            resultado = Pair("El nombre no puede estar vacío",false)
+
+        }else if(comprobarVinoDuplicado(vino.nombre!!)){
+
+            Log.i("VINUMLOG","El vino introducido ya existe")
+            resultado = Pair("El vino introducido ya existe",false)
 
         }else if(vino.origen!!.isBlank()){
 
-            Log.i("VINUMLOG","El origen no puede estar vacio")
+            Log.i("VINUMLOG","El origen no puede estar vacío")
+            resultado = Pair("El origen no puede estar vacío",false)
 
         }else if(vino.anio == null || (vino.anio!!<1500 || vino.anio!!>currentYear)){
 
-            Log.i("VINUMLOG","El año no puede estar vacio o es incorrecto")
+            Log.i("VINUMLOG","El año introducido es incorrecto")
+            resultado = Pair("El año introducido es incorrecto",false)
 
         }else if(vino.descripcion!!.isBlank()){
 
-            Log.i("VINUMLOG","La descripcion no puede estar vacia")
-
-        }else if(vino.origen!!.isBlank()){
-
-            Log.i("VINUMLOG","El origen no puede estar vacio")
+            Log.i("VINUMLOG","La descripcion no puede estar vacía")
+            resultado = Pair("La descripcion no puede estar vacía",false)
 
         }else if(vino.bodega!!.isBlank()){
 
-            Log.i("VINUMLOG","La bodega no puede estar vacia")
+            Log.i("VINUMLOG","La bodega no puede estar vacía")
+            resultado = Pair("La bodega no puede estar vacía ",false)
 
         }else{
 
@@ -150,24 +161,34 @@ class BD {
             identificadorTarea.setValue(vino)
             Log.i("VINUMLOG","Se ha insertado correctamente")
 
-            return true
+            resultado = Pair("Se ha insertado el vino con éxito",false)
+
+            return resultado
 
         }
 
-        Log.i("VINUMLOG","error")
-
-        return false
+        return resultado
     }
 
 
+    /**
+     *
+     * Se puede hacer mas eficiente
+     */
 
-    private fun comprobarVinoDuplicado(FirebaseBD: DatabaseReference, vino: Vino):Boolean{
+    private fun comprobarVinoDuplicado(nombre: String):Boolean{
 
+        val peticionBD = URL("https://vinum-9b17f.firebaseio.com/vinos.json").readText()
 
-        val a = URL("https://${R.string.PROJECT_ID}.firebaseio.com/${R.string.FIREBASE_VINO}").readText()
+        var duplicado = false
 
+        if(peticionBD.contains(nombre, ignoreCase = true)){
 
-        return true
+            duplicado = true
+
+        }
+
+        return duplicado
     }
 
 
