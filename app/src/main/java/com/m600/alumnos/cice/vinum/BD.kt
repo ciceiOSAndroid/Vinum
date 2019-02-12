@@ -161,7 +161,7 @@ class BD {
             identificadorTarea.setValue(vino)
             Log.i("VINUMLOG","Se ha insertado correctamente")
 
-            resultado = Pair("Se ha insertado el vino con éxito",false)
+            resultado = Pair("Se ha insertado el vino con éxito",true)
 
             return resultado
 
@@ -172,16 +172,19 @@ class BD {
 
 
     /**
-     *
-     * Se puede hacer mas eficiente
+     *  Metodo encargado de comprobar que el nombre del vino a insertar no existe ya en la Base de Datos.
+     * @param nombre String
+     * @return Boolean
      */
 
     private fun comprobarVinoDuplicado(nombre: String):Boolean{
 
+        //Obtiene el json RAW de la base de datos
         val peticionBD = URL("https://vinum-9b17f.firebaseio.com/vinos.json").readText()
 
         var duplicado = false
 
+        //Comprueba si el nombre del vino ya existe dentro de la base de datos
         if(peticionBD.contains(nombre, ignoreCase = true)){
 
             duplicado = true

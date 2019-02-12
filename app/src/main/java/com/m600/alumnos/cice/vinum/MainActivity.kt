@@ -98,14 +98,16 @@ class MainActivity : AppCompatActivity() {
         vino.descripcion = "dfksjdfksdfjksdjkfknsdf"
 
         val resultado = BD_vinos.guardarVino(FirebaseBD,vino)
-            //Si al añadir un vino este se añade satisfactoriamente
+
         if(resultado.second){
 
+            //Si al añadir un vino este se añade satisfactoriamente
             Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
 
-            //Si se ha ocurrido un error o los datos son incorrectos
+
         }else{
 
+            //Si se ha ocurrido un error o los datos son incorrectos
             Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
 
         }
