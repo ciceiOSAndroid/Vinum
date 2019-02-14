@@ -1,18 +1,31 @@
 package com.m600.alumnos.cice.vinum
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
+import android.widget.ListView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.storage.FirebaseStorage
 import java.net.URL
 import java.util.*
-import org.json.JSONArray
+import kotlin.collections.ArrayList
 
 
+open class BD {
 
+    companion object {
 
+        // Se declara e incializar el array encargado de almacenar los objetos << Vino >>
+        val vinoObjects:ArrayList<Vino> ?= arrayListOf()
+    }
 
-class BD {
+    fun comprobarImagenes(): ArrayList<Vino>? {
 
+        Log.i("VINUMLOG", "Tamaño actual: ${vinoObjects!!.size}")
+            return vinoObjects
+
+    }
 
     /**
      * Método que va en << onDataChange >> encargado de generar los objetos << Vino >>
@@ -20,73 +33,100 @@ class BD {
      *
      * @param  DataSnapshot
      * @return ArrayList<Vino>?
+     * @author K3V1NS4N
      *
      */
+    fun cargarVinos(firebaseStorage: FirebaseStorage, dataSnapshot: DataSnapshot){
 
-    fun cargarVinos(dataSnapshot: DataSnapshot):ArrayList<Vino>?{
 
-        // Se declara e incializar el array encargado de almacenar los objetos << Vino >>
-        val vinoObjects:ArrayList<Vino> ?= arrayListOf()
 
         val vinosFirebase = dataSnapshot.children.iterator()
         if(vinosFirebase.hasNext()){
 
+
             val listaIndex = vinosFirebase.next()
             val itemsIterator = listaIndex.children.iterator()
-            while (itemsIterator.hasNext()){ //Recorre todos los vinos
 
-                //Obtenemos la información de ellos
+                while (itemsIterator.hasNext()) { //Recorre todos los vinos
 
-                val vinoActual = itemsIterator.next()
-                val vino = Vino()
 
-                val map = vinoActual.value as HashMap<String, Any>
+                    //Obtenemos la información de ellos
 
-                Log.i("VINUM","${vino.anio}")
-                //vino.ID = vinoActual.key
-                vino.nombre = map["nombre"] as String
-                vino.origen = map["origen"] as String
-                vino.bodega = map["bodega"] as String
-                vino.descripcion = map["descripcion"] as String
-                vino.uva = map["uva"] as String
+                    val vinoActual = itemsIterator.next()
+                    val vino = Vino()
 
-                if(map["año"]!=null){
+                    val map = vinoActual.value as HashMap<String, Any>
 
-                    vino.anio = map["año"] as Long
+
+                    //Se añade el objeto Vino con sus propiedades
+
+
+                    Log.i("VINUM", "${vino.anio}")
+                    //vino.ID = vinoActual.key
+                    vino.nombre = map["nombre"] as String
+                    vino.origen = map["origen"] as String
+                    vino.bodega = map["bodega"] as String
+                    vino.descripcion = map["descripcion"] as String
+                    vino.uva = map["uva"] as String
+
+                    if (map["año"] != null) {
+
+                        vino.anio = map["año"] as Long
+                    }
+
+                    if (map["grados"] != null) {
+
+                        vino.grados = map["grados"] as String
+
+                    } else {
+
+                        vino.grados = "?"
+                    }
+
+
+                    /* El vino puede no tener puntuaciones por lo que su atributo puede permanecer declarado
+                         por defecto como null */
+                    if (map["puntuaciones"] != null) {
+                        vino.puntuaciones = map["puntuaciones"] as HashMap<String, Int>
+                    }
+
+
+
+                    //[START FOTOS ]
+
+                    val URl = map["imagen"] as String
+                    // Creación de una referencia a un archivo desde una URI de almacenamiento en la nube de Google
+                    val gsReference = firebaseStorage.getReferenceFromUrl(URl!!)
+                    Log.i("VINUMLOG", URl)
+                    //Resolucion de la foto
+                    val ONE_MEGABYTE: Long = 1024 * 1024
+
+                    //Esto se ejecuta de manera asíncrona
+                    gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                        // Obtiene la informacion de la foto en un ByteArray
+
+                        //Decodificamos el ByteArray en un Bitmap para poder insertarlo en una ImageView
+                        vino.imagen = BitmapFactory.decodeByteArray(it, 0, it.size)
+
+                        Log.i("VINUMLOG", "INSERTADO ${vino.imagen} ")
+                        Log.i("VINUMLOG", "SE AÑADE EL VINO")
+                        vinoObjects!!.add(vino)
+
+                    }.addOnFailureListener {
+                        // Handle any errors
+
+                        Log.i("VINUMLOG", "ERROR AL OBTENER LA FOTO $URl")
+
+                    }
+
+                    //[END FOTOS ]
+
                 }
 
-                if(map["grados"]!=null) {
 
-                    vino.grados = map["grados"] as String
 
-                }else{
-
-                    vino.grados = "?"
-                }
-
-                if(map["imagen"]!=null) {
-
-                    vino.imagen = map["imagen"] as String //URL
-
-                }else {
-
-                    //No hay imagen
-
-                }
-
-                /* El vino puede no tener puntuaciones por lo que su atributo puede permanecer declarado
-                 por defecto como null */
-                if(map["puntuaciones"]!=null){
-                    vino.puntuaciones = map["puntuaciones"] as HashMap<String, Int>
-                }
-
-                //Se añade el objeto Vino con sus propiedades
-                vinoObjects!!.add(vino)
             }
 
-        }
-
-        return vinoObjects
     }
 
 
@@ -111,7 +151,7 @@ class BD {
      * @param FirebaseBD DatabaseReference
      * @param vino Vino
      * @return PAIR<String,Boolean>
-     *
+     * @author K3V1NS4N
      */
 
 
@@ -175,6 +215,7 @@ class BD {
      *  Metodo encargado de comprobar que el nombre del vino a insertar no existe ya en la Base de Datos.
      * @param nombre String
      * @return Boolean
+     * @author K3V1NS4N
      */
 
     private fun comprobarVinoDuplicado(nombre: String):Boolean{
@@ -193,6 +234,7 @@ class BD {
 
         return duplicado
     }
+
 
 
 

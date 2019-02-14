@@ -1,5 +1,7 @@
 package com.m600.alumnos.cice.vinum
 
+import android.graphics.Bitmap
+
 
 class Vino {
 
@@ -21,7 +23,7 @@ class Vino {
     var descripcion: String ?= null
     var puntuaciones: HashMap<String,Int> ?= null
     //Almacena la URL de la cual se obtendrá la imagen
-    var imagen: String ?= null
+    var imagen: Bitmap ?= null
 
 
 

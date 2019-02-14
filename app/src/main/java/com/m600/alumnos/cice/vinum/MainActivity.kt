@@ -7,7 +7,8 @@ import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import android.os.StrictMode
-
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,9 +19,12 @@ class MainActivity : AppCompatActivity() {
 
     //Se declara la referencia a la base de datos
     private lateinit var FirebaseBD: DatabaseReference // BD FIREBASE
+
     lateinit var BD_vinos: BD // Gestor de la BD
 
     var taskListener: ValueEventListener = object : ValueEventListener {
+
+
 
         override fun onCancelled(p0: DatabaseError) {
 
@@ -31,20 +35,75 @@ class MainActivity : AppCompatActivity() {
         // [-----------------<| PRUEBA MOSTRAR VINOS |>-----------------] /
         override fun onDataChange(p0: DataSnapshot) {
 
+            //storage_field_declaration
+            val storage = FirebaseStorage.getInstance()
+
             // Devuelve todos los vinos como ArrayList<Vino>?
-            val vinos = BD_vinos.cargarVinos(p0)
 
-            //Se recorren los resultados y se muestran
-            for (item in vinos!! ){
+            BD_vinos.cargarVinos(storage, p0)
 
-                Log.i("VINOS","Nombre: ${item.nombre}\n" +
-                        "anio: ${item.anio} \n" +
-                        "bodega: ${item.bodega}\n" +
-                        "uva: ${item.uva}\n" +
-                        "origen: ${item.origen}\n" +
-                        "descripcion: ${item.descripcion}\n")
+            var obtenido = 0
 
-            }
+            Thread{
+
+                while(obtenido!=25){
+
+                    //Log.i("VINUMLOG","COMIENZA EL HILO")
+
+                    val resultado = BD_vinos.comprobarImagenes()
+                    Thread.sleep(200)
+
+                    if((resultado!= null) && (resultado.size == 6)){
+
+                        //Se recorren los resultados y se muestran
+                        for (item in resultado!! ) {
+
+                            Log.i(
+                                "VINUMLOG", "Nombre: ${item.nombre}\n" +
+                                        "anio: ${item.anio} \n" +
+                                        "bodega: ${item.bodega}\n" +
+                                        "uva: ${item.uva}\n" +
+                                        "origen: ${item.origen}\n" +
+                                        "descripcion: ${item.descripcion}\n"
+                            )
+
+                            // [START MOSTRAR FOTOS]
+
+
+                            Log.i("VINUMLOG", "SE MUESTRA")
+                            Log.i("VINUMLOG", item.imagen.toString())
+
+                            runOnUiThread {
+                                // Stuff that updates the UI
+                                imageView.setImageBitmap(item.imagen)
+                            }
+
+
+                            // [END MOSTRAR FOTOS]
+
+                            obtenido = 25
+                        }
+
+                    }else{
+
+                            obtenido++
+
+                        if(obtenido==25){
+
+                            runOnUiThread {
+                                // Stuff that updates the UI
+                                Toast.makeText(this@MainActivity,"No se han podido cargar los vinos, revisa tu conexión a internet",Toast.LENGTH_LONG).show()
+                            }
+
+                        }
+
+                    }
+
+                }
+
+
+            }.start()
+
 
         }
     }
@@ -73,12 +132,15 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        añadirVinos() //Ejemplo para añadir vinos
+        //añadirVinos() //Ejemplo para añadir vinos
+
+
+
 
 
     }
 
-
+    
 
     /**
      *  Pruebas para usar el metodo añadirVinos
