@@ -22,8 +22,9 @@ class Vino {
     var bodega: String ?= null
     var descripcion: String ?= null
     var puntuaciones: HashMap<String,Int> ?= null
-    //Almacena la URL de la cual se obtendrá la imagen
     var imagen: Bitmap ?= null
+    //Almacena la URL de la cual se obtendrá la imagen
+    var imagenUrl: String ?= null
 
 
 

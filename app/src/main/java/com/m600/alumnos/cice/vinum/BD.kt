@@ -2,11 +2,14 @@ package com.m600.alumnos.cice.vinum
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.util.Log
+import android.widget.ImageView
 import android.widget.ListView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
 import java.net.URL
 import java.util.*
 import kotlin.collections.ArrayList
@@ -14,12 +17,19 @@ import kotlin.collections.ArrayList
 
 open class BD {
 
-    companion object {
+    // Se declara e incializar el array encargado de almacenar los objetos << Vino >>
+    val vinoObjects:ArrayList<Vino> ?= arrayListOf()
 
-        // Se declara e incializar el array encargado de almacenar los objetos << Vino >>
-        val vinoObjects:ArrayList<Vino> ?= arrayListOf()
-    }
+    var urlImagen:String ?= null
 
+
+
+    /**
+     * Se encarga de devolver el arrayVinos<Vino>, con el objetivo de comprobar su estado, ya que dentro del método
+     * << cargarVinos() >> hay una tarea asincronada añadiendo los objetos al arrayVinos<Vino>
+     * y tiene cierto delay al cargar sus correspondientes fotografias.
+     * @return ArrayList<Vino>?
+     */
     fun comprobarImagenes(): ArrayList<Vino>? {
 
         Log.i("VINUMLOG", "Tamaño actual: ${vinoObjects!!.size}")
@@ -94,9 +104,9 @@ open class BD {
 
                     //[START FOTOS ]
 
-                    val URl = map["imagen"] as String
+                    val URl = map["imagenUrl"] as String
                     // Creación de una referencia a un archivo desde una URI de almacenamiento en la nube de Google
-                    val gsReference = firebaseStorage.getReferenceFromUrl(URl!!)
+                    val gsReference = firebaseStorage.getReferenceFromUrl(URl)
                     Log.i("VINUMLOG", URl)
                     //Resolucion de la foto
                     val ONE_MEGABYTE: Long = 1024 * 1024
@@ -233,6 +243,56 @@ open class BD {
         }
 
         return duplicado
+    }
+
+
+
+
+     fun subirFoto(firebaseStorage: FirebaseStorage, imagen: ImageView, nombre: String):String{
+
+         var urlImagenSubida = ""
+
+        // [START REFERENCIA DE LA SUBIDA]
+        // Create a storage reference from our app
+        val storageRef = firebaseStorage.reference
+
+        // Crea una referencia de la foto con este nombre "mountains.jpg"
+        val mountainsRef = storageRef.child("$nombre.png")
+
+        // crea una referencia respecto a este directorio 'images/mountains.jpg'
+        val mountainImagesRef = storageRef.child("images/$nombre.png")
+
+        // Mientras que los nombres de los archivos son los mismos, las referencias apuntan a diferentes archivos
+        mountainsRef.name == mountainImagesRef.name    // true
+        mountainsRef.path == mountainImagesRef.path    // false
+        // [END REFERENCIA DE LA SUBIDA]
+
+        // [START SUBIR FOTO]
+
+        // Obtener los datos de un ImageView como bytes
+         imagen.isDrawingCacheEnabled = true
+         imagen.buildDrawingCache()
+        val bitmap = (imagen.drawable as BitmapDrawable).bitmap
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+        val data = baos.toByteArray()
+
+        var uploadTask = mountainsRef.putBytes(data)
+        uploadTask.addOnFailureListener {
+            // Ha ocurrido un error al subir la foto
+
+        }.addOnSuccessListener {
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+
+            urlImagen = it.storage.toString()
+
+            Log.i("VINUMLOG","REFERENCIA: ${it.storage}")
+
+        }
+
+        // [END SUBIR FOTO]
+
+        return urlImagenSubida
     }
 
 

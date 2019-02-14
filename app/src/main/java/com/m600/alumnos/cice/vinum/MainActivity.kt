@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import android.os.StrictMode
+import android.view.View
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -22,8 +23,12 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var BD_vinos: BD // Gestor de la BD
 
-    var taskListener: ValueEventListener = object : ValueEventListener {
+    //storage_field_declaration
+    val storage = FirebaseStorage.getInstance()
 
+    var imagenUrl = ""
+
+    var taskListener: ValueEventListener = object : ValueEventListener {
 
 
         override fun onCancelled(p0: DatabaseError) {
@@ -35,12 +40,15 @@ class MainActivity : AppCompatActivity() {
         // [-----------------<| PRUEBA MOSTRAR VINOS |>-----------------] /
         override fun onDataChange(p0: DataSnapshot) {
 
-            //storage_field_declaration
-            val storage = FirebaseStorage.getInstance()
+
 
             // Devuelve todos los vinos como ArrayList<Vino>?
 
             BD_vinos.cargarVinos(storage, p0)
+
+
+
+
 
             var obtenido = 0
 
@@ -76,6 +84,7 @@ class MainActivity : AppCompatActivity() {
                             runOnUiThread {
                                 // Stuff that updates the UI
                                 imageView.setImageBitmap(item.imagen)
+
                             }
 
 
@@ -146,33 +155,62 @@ class MainActivity : AppCompatActivity() {
      *  Pruebas para usar el metodo añadirVinos
      */
 
-    fun añadirVinos(){
+    fun añadirVinos(view: View){
 
-        // Se declara un nuevo vino
-        val vino = Vino()
+        imagenUrl = BD_vinos.subirFoto(storage,imageView,"foto1")
 
-        //Se añaden al menos sus elementos obligatorios
-        vino.nombre = "CUEVA DEL CHAMAN ROBLE"
-        vino.anio = 2000
-        vino.bodega = "Prueba"
-        vino.uva = "Prueba"
-        vino.origen = "Prueba"
-        vino.descripcion = "Prueba"
-
-        val resultado = BD_vinos.guardarVino(FirebaseBD,vino)
-
-        if(resultado.second){
-
-            //Si al añadir un vino este se añade satisfactoriamente
-            Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
+        var obtenido = 0
+        Thread{
 
 
-        }else{
+            while (obtenido!=25){
 
-            //Si se ha ocurrido un error o los datos son incorrectos
-            Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
+                Log.i("VINUMLOG","IMAGEN URL BD: ${BD_vinos.urlImagen}")
+                if(BD_vinos.urlImagen==null){
 
-        }
+                    Thread.sleep(200)
+                    obtenido++
+                }else{
+
+
+                    // Se declara un nuevo vino
+                    val vino = Vino()
+
+                    //Se añaden al menos sus elementos obligatorios
+                    vino.nombre = "CUEVA DEL CHAMAN ROBLE2"
+                    vino.anio = 2000
+                    vino.bodega = "Prueba"
+                    vino.uva = "Prueba"
+                    vino.origen = "Prueba"
+                    vino.descripcion = "Prueba"
+                    vino.imagenUrl = BD_vinos.urlImagen
+
+                    val resultado = BD_vinos.guardarVino(FirebaseBD,vino)
+                    obtenido =25
+                    if(resultado.second){
+
+                        runOnUiThread {
+                            //Si al añadir un vino este se añade satisfactoriamente
+                            Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
+
+                        }
+
+
+                    }else{
+
+                        runOnUiThread {
+                            //Si al añadir un vino este se añade satisfactoriamente
+                            Toast.makeText(this@MainActivity,resultado.first,Toast.LENGTH_LONG).show()
+
+                        }
+                    }
+
+                }
+
+
+            }
+        }.start()
+
 
 
 
