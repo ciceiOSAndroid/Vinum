@@ -4,8 +4,10 @@ Aplicación de Vinos - M600
 CONFIGURACION BD DE FIREBASE
 
 	CARGAR VINOS [X]
-	AÑADIR VINOS [...] Mañana lo subo completo y pulido
-	SUBIR IMAGENES [...]  Mañana lo subo completo y pulido
+	AÑADIR VINOS [X] 
+	SUBIR IMAGENES [X] 
+	CARGAR IMAGENES [X]
+	Faltan retocar algunas cosas para que gane estabilidad y documentarlo mejor
 
   ........
   .....
