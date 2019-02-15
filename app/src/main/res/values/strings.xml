@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Vinum</string>
+    <string name="textView">descripción</string>
+    <string name="todo">TODO</string>
+    <string name="vinoTitle">Título</string>
+    <string name="vinoDescripcion">Descripción</string>
+    <string name="vinoPrice">0 €</string>
 </resources>
