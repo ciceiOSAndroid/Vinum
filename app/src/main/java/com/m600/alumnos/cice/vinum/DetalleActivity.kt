@@ -52,7 +52,7 @@ class DetalleActivity : AppCompatActivity() {
         animacion()
 
         botonCesta.setOnClickListener {
-            ListDataManager.saveList(Vino)
+            ListDataManager(this).saveList(Vino)
         }
 
 
