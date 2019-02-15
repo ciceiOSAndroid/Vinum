@@ -17,10 +17,14 @@ import kotlin.collections.ArrayList
 
 open class BD {
 
-    // Se declara e incializar el array encargado de almacenar los objetos << Vino >>
+    // Se declara e incializa el array encargado de almacenar los objetos << Vino >>
     val vinoObjects:ArrayList<Vino> ?= arrayListOf()
 
+    // Almacenará la URL que referencia a la foto que se acaba de subir
     var urlImagen:String ?= null
+
+    // Numero de vinos de la base de datos
+    var numeroVinos: Long ?= null
 
 
 
@@ -48,14 +52,21 @@ open class BD {
      */
     fun cargarVinos(firebaseStorage: FirebaseStorage, dataSnapshot: DataSnapshot){
 
-
+        vinoObjects?.clear() // Se borran los vinos almacenados
 
         val vinosFirebase = dataSnapshot.children.iterator()
+
+
+
         if(vinosFirebase.hasNext()){
 
 
             val listaIndex = vinosFirebase.next()
             val itemsIterator = listaIndex.children.iterator()
+
+            //Obtiene el numero de vinos que hay en la base de datos
+            numeroVinos = listaIndex.childrenCount
+
 
                 while (itemsIterator.hasNext()) { //Recorre todos los vinos
 
@@ -96,40 +107,46 @@ open class BD {
 
                     /* El vino puede no tener puntuaciones por lo que su atributo puede permanecer declarado
                          por defecto como null */
-                    if (map["puntuaciones"] != null) {
-                        vino.puntuaciones = map["puntuaciones"] as HashMap<String, Int>
+                    if (map["puntuacion"] != null) {
+                        vino.puntuacion = map["puntuacion"] as Long
                     }
 
 
+                    if(map["imagenUrl"] != null){
 
-                    //[START FOTOS ]
+                        //[START FOTOS ]
+                        val URl = map["imagenUrl"] as String
+                        // Creación de una referencia a un archivo desde una URI de almacenamiento en la nube de Google
+                        val gsReference = firebaseStorage.getReferenceFromUrl(URl)
 
-                    val URl = map["imagenUrl"] as String
-                    // Creación de una referencia a un archivo desde una URI de almacenamiento en la nube de Google
-                    val gsReference = firebaseStorage.getReferenceFromUrl(URl)
-                    Log.i("VINUMLOG", URl)
-                    //Resolucion de la foto
-                    val ONE_MEGABYTE: Long = 1024 * 1024
 
-                    //Esto se ejecuta de manera asíncrona
-                    gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-                        // Obtiene la informacion de la foto en un ByteArray
+                        Log.i("VINUMLOG", URl)
+                        //Resolucion de la foto
+                        val ONE_MEGABYTE: Long = 1024 * 1024
 
-                        //Decodificamos el ByteArray en un Bitmap para poder insertarlo en una ImageView
-                        vino.imagen = BitmapFactory.decodeByteArray(it, 0, it.size)
+                        //Esto se ejecuta de manera asíncrona
+                        gsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener {
+                            // Obtiene la informacion de la foto en un ByteArray
 
-                        Log.i("VINUMLOG", "INSERTADO ${vino.imagen} ")
-                        Log.i("VINUMLOG", "SE AÑADE EL VINO")
-                        vinoObjects!!.add(vino)
+                            //Decodificamos el ByteArray en un Bitmap para poder insertarlo en una ImageView
+                            vino.imagen = BitmapFactory.decodeByteArray(it, 0, it.size)
 
-                    }.addOnFailureListener {
-                        // Handle any errors
+                            Log.i("VINUMLOG", "INSERTADO ${vino.imagen} ")
+                            Log.i("VINUMLOG", "SE AÑADE EL VINO")
+                            vinoObjects!!.add(vino)
 
-                        Log.i("VINUMLOG", "ERROR AL OBTENER LA FOTO $URl")
+                        }.addOnFailureListener {
+                            // Handle any errors
+
+                            Log.i("VINUMLOG", "ERROR AL OBTENER LA FOTO $URl")
+
+                        }
+
+                        //[END FOTOS ]
+
 
                     }
 
-                    //[END FOTOS ]
 
                 }
 
@@ -202,6 +219,11 @@ open class BD {
             Log.i("VINUMLOG","La bodega no puede estar vacía")
             resultado = Pair("La bodega no puede estar vacía ",false)
 
+        }else if(vino.imagenUrl!!.isBlank()){
+
+            Log.i("VINUMLOG","El vino necesita una imagen")
+            resultado = Pair("El vino necesita una imagen",false)
+
         }else{
 
             //Lo obtenemos de la base de datos
@@ -247,10 +269,16 @@ open class BD {
 
 
 
-
-     fun subirFoto(firebaseStorage: FirebaseStorage, imagen: ImageView, nombre: String):String{
-
-         var urlImagenSubida = ""
+    /**
+     *  Se encarga de subir la fotografía del vino, pasándole una ImageView, se recomienda que sea
+     *  el ImageView de previsualización de la foto que se ha hecho del vino.
+     * @param firebaseStorage String
+     * @param imagen ImageView
+     * @param nombre String
+     * @return Boolean
+     * @author K3V1NS4N
+     */
+     fun subirFoto(firebaseStorage: FirebaseStorage, imagen: ImageView, nombre: String){
 
         // [START REFERENCIA DE LA SUBIDA]
         // Create a storage reference from our app
@@ -259,12 +287,6 @@ open class BD {
         // Crea una referencia de la foto con este nombre "mountains.jpg"
         val mountainsRef = storageRef.child("$nombre.png")
 
-        // crea una referencia respecto a este directorio 'images/mountains.jpg'
-        val mountainImagesRef = storageRef.child("images/$nombre.png")
-
-        // Mientras que los nombres de los archivos son los mismos, las referencias apuntan a diferentes archivos
-        mountainsRef.name == mountainImagesRef.name    // true
-        mountainsRef.path == mountainImagesRef.path    // false
         // [END REFERENCIA DE LA SUBIDA]
 
         // [START SUBIR FOTO]
@@ -277,7 +299,7 @@ open class BD {
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
         val data = baos.toByteArray()
 
-        var uploadTask = mountainsRef.putBytes(data)
+        val uploadTask = mountainsRef.putBytes(data)
         uploadTask.addOnFailureListener {
             // Ha ocurrido un error al subir la foto
 
@@ -292,13 +314,6 @@ open class BD {
 
         // [END SUBIR FOTO]
 
-        return urlImagenSubida
     }
-
-
-
-
-
-
 
 }
