@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@color/fondo"
+        android:id="@+id/CalculatorRoot">
+
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:visibility="visible">
+
+        <android.support.constraint.Guideline
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/guideline2"
+                app:layout_constraintGuide_percent="0.5"/>
+
+        <TextView
+                android:text="0"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/calculatorGlassCount"
+                android:elevation="5dp"
+                app:layout_constraintEnd_toEndOf="@+id/floatingGlassCard"
+                app:layout_constraintStart_toStartOf="@+id/floatingGlassCard"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/floatingGlassCard"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/fondo"
+                android:textAlignment="center"
+                style="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textSize="@dimen/bigTextSize"/>
+
+        <android.support.v7.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/guideline2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cardBackgroundColor="@color/colorPrimaryDark"
+                app:cardCornerRadius="0dp"
+                android:id="@+id/cardView3">
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/consCard">
+
+                <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:id="@+id/bottleLottieView"
+                        app:lottie_rawRes="@raw/wine_animation"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="24dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginTop="24dp"
+                        android:baselineAlignBottom="true"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginBottom="24dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:scaleType="centerCrop"
+                        android:adjustViewBounds="true"/>
+
+                <TextView
+                        android:text="0"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/calculatorBottleCount"
+                        app:layout_constraintStart_toEndOf="@+id/bottleLottieView"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/roboto"
+                        android:textColor="@color/fondo"
+                        android:textAlignment="textStart"
+                        android:singleLine="true"
+                        android:textSize="@dimen/bigTextSize"
+                        android:includeFontPadding="false"
+                        android:lineSpacingExtra="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        android:layout_marginEnd="112dp"
+                        android:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toBottomOf="@+id/bottleLottieView"/>
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <com.m600.alumnos.cice.vinum.calculatorActivity.tools.CalculatorCustomCardView
+                android:layout_width="0dp"
+                android:clickable="true"
+                android:id="@+id/floatingGlassCard"
+                app:cardBackgroundColor="@color/colorAccent"
+                app:cardElevation="10dp"
+                app:layout_constraintDimensionRatio=""
+                app:layout_constraintStart_toStartOf="@+id/calculatorGuideStartGlassCard"
+                app:layout_constraintEnd_toStartOf="@+id/calculatorGuideEndGlassCard"
+                app:layout_constraintBottom_toTopOf="@+id/calculatorGuideBottomGlassCard"
+                app:layout_constraintTop_toTopOf="@+id/calculatorGuideTopGlassCard"
+                android:layout_height="0dp">
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <android.support.v7.widget.RecyclerView
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/calculatorGlassRV"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+            </android.support.constraint.ConstraintLayout>
+        </com.m600.alumnos.cice.vinum.calculatorActivity.tools.CalculatorCustomCardView>
+
+        <android.support.constraint.Guideline
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/calculatorGuideEndGlassCard"
+                app:layout_constraintGuide_percent="0.94"/>
+
+        <android.support.constraint.Guideline
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/calculatorGuideStartGlassCard"
+                app:layout_constraintGuide_percent="0.74"/>
+
+        <android.support.constraint.Guideline
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/calculatorGuideTopGlassCard"
+                app:layout_constraintGuide_percent="0.45"/>
+
+        <android.support.constraint.Guideline
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/calculatorGuideBottomGlassCard"
+                app:layout_constraintGuide_percent="0.55"/>
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="24dp"
+                android:id="@+id/calculatorAlcoholHolder"
+                app:layout_constraintTop_toBottomOf="@+id/calculatorGuideBottomGlassCard"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintBottom_toTopOf="@+id/calculatorGeneroHolder">
+
+            <TextView
+                    android:text="Alcohol en aire"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/calculatorAlcoholLabel"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textSize="@dimen/bigTextSize"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/colorPrimary"/>
+
+            <View
+                    android:id="@+id/divider"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimary"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/calculatorAlcoholLabel"
+                    app:layout_constraintBottom_toBottomOf="@+id/calculatorAlcoholLabel"
+                    app:layout_constraintVertical_bias="0.85"/>
+
+            <TextView
+                    android:text="0.00 mg/l"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/calculatorAlcoholCounter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/calculatorAlcoholLabel"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/roboto_light"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textAlignment="center"
+                    android:textSize="@dimen/mediumTextSize"
+                    android:textColor="@color/colorPrimary"/>
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/calculatorAlcoholHolder"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:id="@+id/calculatorGeneroHolder"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintBottom_toTopOf="@+id/calculatorPesoHolder">
+
+            <TextView
+                    android:text="Género"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/calculatorGeneroLabel"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:fontFamily="@font/roboto"
+                    android:textSize="@dimen/bigTextSize"
+                    android:textColor="@color/colorPrimary"/>
+
+            <View
+                    android:id="@+id/divider2"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@+id/calculatorGeneroLabel"
+                    app:layout_constraintTop_toTopOf="@+id/calculatorGeneroLabel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintVertical_bias="0.85"/>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintTop_toBottomOf="@+id/calculatorGeneroLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/calculatorManHolder"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintEnd_toStartOf="@+id/calculatorWomanHolder">
+
+                <TextView
+                        android:text="Catador "
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/calculatorManLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:textSize="@dimen/mediumTextSize"
+                        android:textColor="@color/colorPrimary"
+                        android:fontFamily="@font/roboto_light"/>
+
+                <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="@dimen/mediumTextSize"
+                        android:layout_height="0dp"
+                        app:lottie_rawRes="@raw/rb_animation"
+                        app:lottie_colorFilter="@color/colorPrimary"
+                        app:layout_constraintTop_toTopOf="@+id/calculatorManLabel"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/calculatorManRB"
+                        app:layout_constraintStart_toEndOf="@+id/calculatorManLabel"
+                        android:layout_marginStart="8dp"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.constraint.ConstraintLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@+id/calculatorManHolder"
+                    app:layout_constraintStart_toEndOf="@+id/calculatorManHolder"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/calculatorManHolder"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/calculatorWomanHolder"
+                    app:layout_constraintHorizontal_bias="0.5">
+
+                <TextView
+                        android:text="Catadora"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:id="@+id/calculatorWomanLabel"
+                        app:layout_constraintStart_toStartOf="parent"
+                        android:fontFamily="@font/roboto_light"
+                        android:textSize="@dimen/mediumTextSize"
+                        android:textColor="@color/colorPrimary"/>
+
+                <com.airbnb.lottie.LottieAnimationView
+                        android:layout_width="@dimen/mediumTextSize"
+                        android:layout_height="0dp"
+                        app:lottie_colorFilter="@color/colorPrimary"
+                        app:lottie_rawRes="@raw/rb_animation"
+                        app:layout_constraintTop_toTopOf="@+id/calculatorWomanLabel"
+                        app:layout_constraintBottom_toBottomOf="@+id/calculatorWomanLabel"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:id="@+id/calculatorWomanRB"
+                        app:layout_constraintStart_toEndOf="@+id/calculatorWomanLabel"
+                        android:layout_marginStart="8dp"/>
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="81dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/calculatorGeneroHolder"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/calculatorPesoHolder"
+                app:layout_constraintHorizontal_bias="0.5">
+
+            <TextView
+                    android:text="Peso"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:id="@+id/calculatorPesoLabel"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textSize="@dimen/bigTextSize"
+                    android:textColor="@color/colorPrimary"
+                    android:fontFamily="@font/roboto"/>
+
+            <View
+                    android:id="@+id/divider3"
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/calculatorPesoLabel"
+                    app:layout_constraintBottom_toBottomOf="@+id/calculatorPesoLabel"
+                    app:layout_constraintVertical_bias="0.85"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintTop_toBottomOf="@+id/calculatorPesoLabel"
+                    app:layout_constraintBottom_toBottomOf="parent"
+            >
+
+                <android.support.v7.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/calculatorPesoRV"/>
+                <android.support.constraint.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:srcCompat="@drawable/ic_flechas_arriba"
+                            android:clickable="true"
+                            android:background="?selectableItemBackgroundBorderless"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:id="@+id/calculatorUpArrow"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/calculatorDownArrow"
+                            android:layout_marginEnd="8dp"
+                            android:tint="@color/colorPrimary"
+                            app:layout_constraintDimensionRatio="1:1"
+                            android:adjustViewBounds="true"/>
+                    <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            app:srcCompat="@drawable/ic_flechas_abajo"
+                            android:clickable="true"
+                            android:background="?selectableItemBackgroundBorderless"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:id="@+id/calculatorDownArrow"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/calculatorUpArrow"
+                            app:layout_constraintHorizontal_bias="0.5"
+                            android:layout_marginStart="8dp"
+                            android:tint="@color/colorPrimary"
+                            app:layout_constraintDimensionRatio="h,1:1"
+                            android:adjustViewBounds="true"/>
+                </android.support.constraint.ConstraintLayout>
+
+            </FrameLayout>
+
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>
