@@ -18,7 +18,7 @@ class CalculatorGlassRecyclerAdapter(val context: Context): RecyclerView.Adapter
     }
 
     override fun getItemCount(): Int {
-        return 22
+        return 29
     }
 
     override fun onBindViewHolder(p0: CalculatorViewHolder, p1: Int) {

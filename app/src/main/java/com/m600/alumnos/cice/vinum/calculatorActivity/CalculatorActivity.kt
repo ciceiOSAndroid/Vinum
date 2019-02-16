@@ -8,11 +8,16 @@ import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSmoothScroller
 import android.support.v7.widget.LinearSnapHelper
+import android.util.AttributeSet
 import android.util.Log
 import android.widget.Toast
+import com.airbnb.lottie.LottieAnimationView
 import com.m600.alumnos.cice.vinum.R
 import com.m600.alumnos.cice.vinum.calculatorActivity.tools.*
 import kotlinx.android.synthetic.main.activity_calculator.*
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.time.LocalTime
 
 class CalculatorActivity : AppCompatActivity(),
     CalculatorGlassSnapOnScrollListener.OnSnapPositionChangeListener,
@@ -50,14 +55,19 @@ class CalculatorActivity : AppCompatActivity(),
 
     private var selectGenre : Genre? = null
     private var peso: Int = 40
+    private var lastAlcoholCounter = 0.0
 
     private var calculatorGlassAnimationController: CalculatorGlassAnimationController? = null
 
     private var botleAnimationAnimating = false
     private var currentRBState = RBAnimationState.NONE
 
+    private var alertCarController: Alert? = null
+    private var alertAmbulanceController: Alert? = null
+    private var alertWastedController: Alert? = null
     private var carAlertController: carAlert? = null
     private var ambulanceAlerController: ambulanceAlert? = null
+    private var wastedAlertController: wastedAlert? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,6 +79,10 @@ class CalculatorActivity : AppCompatActivity(),
         bottleLottieView.enableMergePathsForKitKatAndAbove(true)
         carAlertController = carAlert()
         ambulanceAlerController = ambulanceAlert()
+        wastedAlertController = wastedAlert()
+        alertCarController = Alert()
+        alertAmbulanceController = Alert()
+        alertWastedController = Alert()
 
         calculatorGlassAnimationController = CalculatorGlassAnimationController(this)
         linearLayout = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -249,11 +263,142 @@ class CalculatorActivity : AppCompatActivity(),
             else -> null
         }
         val gradoAlcoholemiaSangre = gradosAlcoholPuro / ( peso * constanteGenero!!)
-        val gradoAlcoholemiaAire = gradoAlcoholemiaSangre / 200
+        var gradoAlcoholemiaAire = gradoAlcoholemiaSangre / 200
+        val df= DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        gradoAlcoholemiaAire = df.format(gradoAlcoholemiaAire).toDouble()
         calculatorAlcoholCounter.text = String.format("%1\$,.2f mg/l",gradoAlcoholemiaAire)
-        manageCarAlert(gradoAlcoholemiaAire)
-        manageAmbulanceAlert(gradoAlcoholemiaAire)
 
+        /*if (lastAlcoholCounter < gradoAlcoholemiaAire){
+            manageCarAlert(gradoAlcoholemiaAire)
+            manageAmbulanceAlert(gradoAlcoholemiaAire)
+            manageWastedAlert(gradoAlcoholemiaAire)
+        } else {
+            manageWastedAlert(gradoAlcoholemiaAire)
+            manageAmbulanceAlert(gradoAlcoholemiaAire)
+            manageCarAlert(gradoAlcoholemiaAire)
+        }*/
+
+        manageAlerts(gradoAlcoholemiaAire, calculatorCarAlertView, alertCarController!!, 2, Pair(0.25, 0.0))
+        manageAlerts(gradoAlcoholemiaAire, calculatorAmbulanceAlertView, alertAmbulanceController!!, 1, Pair(1.0, null))
+        manageAlerts(gradoAlcoholemiaAire, calculatorWastedAnimationView, alertWastedController!!, 2, Pair(2.0, 1.5))
+
+        lastAlcoholCounter = gradoAlcoholemiaAire
+
+    }
+
+    private fun manageAlerts(nivelAlcolemia: Double, lottieView: LottieAnimationView, alertController: Alert, numberOfStates: Int, separator: Pair<Double, Double?>){
+        var currentMaxFrame = 0
+        var currentMinFrame = 0
+        var currentSpeed = 1f
+        val firstSeparator = separator.first
+        var secondSeparator = separator.second
+
+        secondSeparator?.let {
+            if (it != 0.00){
+                secondSeparator -= 0.01
+            }
+        }
+
+        if (numberOfStates < 1 || numberOfStates > 2) return
+
+        if (numberOfStates == 1){
+            when {
+                nivelAlcolemia >= firstSeparator ->{
+                    when(alertController.lastState){
+                        alerState.HIDE -> {
+                            currentMaxFrame = 12
+                            currentMinFrame = 0
+                            currentSpeed = 1f
+                        }
+                        alerState.TOTAL -> {
+                            return
+                        }
+                        else -> return
+                    }
+                    alertController.lastState = alerState.TOTAL
+                }
+                nivelAlcolemia < firstSeparator ->{
+                    when(alertController.lastState){
+                        alerState.HIDE ->{
+                            return
+                        }
+                        alerState.TOTAL ->{
+                            currentMaxFrame = 12
+                            currentMinFrame = 0
+                            currentSpeed = -1f
+                        }
+                        else -> return
+                    }
+                    alertController.lastState = alerState.HIDE
+                }
+            }
+        } else {
+            if (secondSeparator == null) return
+
+            when {
+                nivelAlcolemia >= firstSeparator -> {
+                    when(alertController.lastState){
+                        alerState.HIDE -> {
+                            currentMaxFrame = 19
+                            currentMinFrame = 0
+                            currentSpeed = 1f
+                        }
+                        alerState.MEDIUM -> {
+                            currentMaxFrame = 19
+                            currentMinFrame = 12
+                            currentSpeed = 1f
+                        }
+                        alerState.TOTAL -> {
+                            return
+                        }
+                    }
+                    alertController.lastState = alerState.TOTAL
+                }
+                nivelAlcolemia < firstSeparator && nivelAlcolemia > secondSeparator ->{
+                    when(alertController.lastState){
+                        alerState.HIDE ->{
+                            currentMaxFrame = 12
+                            currentMinFrame = 0
+                            currentSpeed = 1f
+                        }
+                        alerState.MEDIUM ->{
+                            return
+                        }
+                        alerState.TOTAL ->{
+                            currentMaxFrame = 19
+                            currentMinFrame = 12
+                            currentSpeed = -1f
+                        }
+                    }
+                    alertController.lastState = alerState.MEDIUM
+                }
+                nivelAlcolemia <= secondSeparator ->{
+                    when(alertController.lastState){
+                        alerState.HIDE ->{
+                            return
+                        }
+                        alerState.MEDIUM ->{
+                            currentMaxFrame = 12
+                            currentMinFrame = 0
+                            currentSpeed = -1f
+                        }
+                        alerState.TOTAL ->{
+                            currentMaxFrame = 19
+                            currentMinFrame = 0
+                            currentSpeed = -1f
+                        }
+                    }
+                    alertController.lastState = alerState.HIDE
+                }
+            }
+        }
+
+        lottieView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+        lottieView.speed = currentSpeed
+        lottieView.playAnimation()
+        alertController.lastMaxFrame = currentMaxFrame
+        alertController.lastMinFrame = currentMinFrame
     }
 
     fun manageCarAlert(nivelAlcolemia: Double){
@@ -366,6 +511,89 @@ class CalculatorActivity : AppCompatActivity(),
         ambulanceAlerController!!.lastMinFrame = currentMinFrame
     }
 
+    fun manageWastedAlert(nivelAlcolemia: Double){
+        calculatorWastedAnimationView.pauseAnimation()
+        var currentMaxFrame = 0
+        var currentMinFrame = 0
+        var currentSpeed = 1f
+        Log.i("ALCOHOL","nivel alcohol, $nivelAlcolemia")
+        when{
+            nivelAlcolemia >= 2.0 -> {
+                when(wastedAlertController!!.lastState){
+                    wastedAlert.wastedState.HIDE ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 0
+                        currentSpeed = 1f
+                    }
+                    wastedAlert.wastedState.TOTALLY ->{
+                        return
+                    }
+                    wastedAlert.wastedState.ALMOST ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 12
+                        currentSpeed = 1f
+                    }
+                }
+                wastedAlertController!!.lastState = wastedAlert.wastedState.TOTALLY
+
+            }
+            nivelAlcolemia < 2.0 && nivelAlcolemia >= 1.5 -> {
+                when(wastedAlertController!!.lastState){
+                    wastedAlert.wastedState.HIDE ->{
+                        currentMaxFrame = 12
+                        currentMinFrame = 0
+                        currentSpeed = 1f
+                    }
+                    wastedAlert.wastedState.TOTALLY ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 12
+                        currentSpeed = -1f
+                    }
+                    wastedAlert.wastedState.ALMOST ->{
+                        return
+                    }
+                }
+                wastedAlertController!!.lastState = wastedAlert.wastedState.ALMOST
+
+            }
+            nivelAlcolemia < 1.50 -> {
+                when(wastedAlertController!!.lastState){
+                    wastedAlert.wastedState.HIDE ->{
+                        return
+                    }
+                    wastedAlert.wastedState.TOTALLY ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 0
+                        currentSpeed = -1f
+                    }
+                    wastedAlert.wastedState.ALMOST ->{
+                        currentMaxFrame = 12
+                        currentMinFrame = 0
+                        currentSpeed = -1f
+                    }
+                }
+                wastedAlertController!!.lastState = wastedAlert.wastedState.HIDE
+            }
+        }
+        calculatorWastedAnimationView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+        calculatorWastedAnimationView.speed = currentSpeed
+        calculatorWastedAnimationView.playAnimation()
+        wastedAlertController!!.lastMaxFrame = currentMaxFrame
+        wastedAlertController!!.lastMinFrame = currentMinFrame
+    }
+
+    enum class alerState{
+        HIDE, MEDIUM, TOTAL
+    }
+
+    internal class Alert{
+        var lastMaxFrame = 0
+        var lastMinFrame = 0
+        var lastSpeed = 1f
+        var lastState = alerState.HIDE
+        var wasAnimatingBeforePause = false
+    }
+
     internal class carAlert{
         var lastMaxFrame = 0
         var lastMinFrame = 0
@@ -387,6 +615,18 @@ class CalculatorActivity : AppCompatActivity(),
 
         enum class ambulanceState{
             HIDE, SHOW
+        }
+    }
+
+    internal class wastedAlert{
+        var lastMaxFrame = 0
+        var lastMinFrame = 0
+        var lastSpeed = 1f
+        var lastState = wastedState.HIDE
+        var wasAnimatingBeforePause = false
+
+        enum class wastedState{
+            HIDE, ALMOST, TOTALLY
         }
     }
 
@@ -412,6 +652,10 @@ class CalculatorActivity : AppCompatActivity(),
             calculatorAmbulanceAlertView.playAnimation()
             ambulanceAlerController!!.wasAnimatingBeforePause = false
         }
+        if (wastedAlertController!!.wasAnimatingBeforePause){
+            calculatorWastedAnimationView.playAnimation()
+            wastedAlertController!!.wasAnimatingBeforePause = false
+        }
 
     }
 
@@ -432,6 +676,10 @@ class CalculatorActivity : AppCompatActivity(),
         if (calculatorAmbulanceAlertView.isAnimating){
             calculatorAmbulanceAlertView.pauseAnimation()
             ambulanceAlerController!!.wasAnimatingBeforePause = true
+        }
+        if (calculatorWastedAnimationView.isAnimating){
+            calculatorWastedAnimationView.pauseAnimation()
+            wastedAlertController!!.wasAnimatingBeforePause = true
         }
         if (bottleLottieView.isAnimating) {
             bottleLottieView.pauseAnimation()
