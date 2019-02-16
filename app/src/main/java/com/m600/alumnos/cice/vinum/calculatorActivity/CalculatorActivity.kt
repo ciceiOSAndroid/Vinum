@@ -57,6 +57,7 @@ class CalculatorActivity : AppCompatActivity(),
     private var currentRBState = RBAnimationState.NONE
 
     private var carAlertController: carAlert? = null
+    private var ambulanceAlerController: ambulanceAlert? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +68,7 @@ class CalculatorActivity : AppCompatActivity(),
 
         bottleLottieView.enableMergePathsForKitKatAndAbove(true)
         carAlertController = carAlert()
+        ambulanceAlerController = ambulanceAlert()
 
         calculatorGlassAnimationController = CalculatorGlassAnimationController(this)
         linearLayout = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -250,6 +252,7 @@ class CalculatorActivity : AppCompatActivity(),
         val gradoAlcoholemiaAire = gradoAlcoholemiaSangre / 200
         calculatorAlcoholCounter.text = String.format("%1\$,.2f mg/l",gradoAlcoholemiaAire)
         manageCarAlert(gradoAlcoholemiaAire)
+        manageAmbulanceAlert(gradoAlcoholemiaAire)
 
     }
 
@@ -275,11 +278,6 @@ class CalculatorActivity : AppCompatActivity(),
                         currentSpeed = 1f
                     }
                 }
-                calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
-                calculatorCarAlertView.speed = currentSpeed
-                calculatorCarAlertView.playAnimation()
-                carAlertController!!.lastMaxFrame = currentMaxFrame
-                carAlertController!!.lastMinFrame = currentMinFrame
                 carAlertController!!.lastState = carAlert.carState.DANGER
 
             }
@@ -299,11 +297,6 @@ class CalculatorActivity : AppCompatActivity(),
                         return
                     }
                 }
-                calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
-                calculatorCarAlertView.speed = currentSpeed
-                calculatorCarAlertView.playAnimation()
-                carAlertController!!.lastMaxFrame = currentMaxFrame
-                carAlertController!!.lastMinFrame = currentMinFrame
                 carAlertController!!.lastState = carAlert.carState.PRECAUTION
 
             }
@@ -323,14 +316,54 @@ class CalculatorActivity : AppCompatActivity(),
                         currentSpeed = -1f
                     }
                 }
-                calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
-                calculatorCarAlertView.speed = currentSpeed
-                calculatorCarAlertView.playAnimation()
-                carAlertController!!.lastMaxFrame = currentMaxFrame
-                carAlertController!!.lastMinFrame = currentMinFrame
                 carAlertController!!.lastState = carAlert.carState.HIDE
             }
         }
+        calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+        calculatorCarAlertView.speed = currentSpeed
+        calculatorCarAlertView.playAnimation()
+        carAlertController!!.lastMaxFrame = currentMaxFrame
+        carAlertController!!.lastMinFrame = currentMinFrame
+    }
+
+    fun manageAmbulanceAlert(nivelAlcolemia: Double){
+        calculatorAmbulanceAlertView.pauseAnimation()
+        var currentMaxFrame = 0
+        var currentMinFrame = 0
+        var currentSpeed = 1f
+        when{
+            nivelAlcolemia >= 1.0 -> {
+                when (ambulanceAlerController!!.lastState){
+                    ambulanceAlert.ambulanceState.HIDE ->{
+                        currentMaxFrame = 12
+                        currentMinFrame = 0
+                        currentSpeed = 1f
+                    }
+                    ambulanceAlert.ambulanceState.SHOW ->{
+                        return
+                    }
+                }
+                ambulanceAlerController!!.lastState = ambulanceAlert.ambulanceState.SHOW
+            }
+            nivelAlcolemia < 1.0 -> {
+                when (ambulanceAlerController!!.lastState){
+                    ambulanceAlert.ambulanceState.HIDE ->{
+                        return
+                    }
+                    ambulanceAlert.ambulanceState.SHOW ->{
+                        currentMaxFrame = 12
+                        currentMinFrame = 0
+                        currentSpeed = -1f
+                    }
+                }
+                ambulanceAlerController!!.lastState = ambulanceAlert.ambulanceState.HIDE
+            }
+        }
+        calculatorAmbulanceAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+        calculatorAmbulanceAlertView.speed = currentSpeed
+        calculatorAmbulanceAlertView.playAnimation()
+        ambulanceAlerController!!.lastMaxFrame = currentMaxFrame
+        ambulanceAlerController!!.lastMinFrame = currentMinFrame
     }
 
     internal class carAlert{
@@ -342,6 +375,18 @@ class CalculatorActivity : AppCompatActivity(),
 
         enum class carState{
             HIDE, PRECAUTION, DANGER
+        }
+    }
+
+    internal class ambulanceAlert{
+        var lastMaxFrame = 0
+        var lastMinFrame = 0
+        var lastSpeed = 1f
+        var lastState = ambulanceState.HIDE
+        var wasAnimatingBeforePause = false
+
+        enum class ambulanceState{
+            HIDE, SHOW
         }
     }
 
@@ -363,6 +408,10 @@ class CalculatorActivity : AppCompatActivity(),
             calculatorCarAlertView.playAnimation()
             carAlertController!!.wasAnimatingBeforePause = false
         }
+        if (ambulanceAlerController!!.wasAnimatingBeforePause){
+            calculatorAmbulanceAlertView.playAnimation()
+            ambulanceAlerController!!.wasAnimatingBeforePause = false
+        }
 
     }
 
@@ -379,6 +428,10 @@ class CalculatorActivity : AppCompatActivity(),
         if (calculatorCarAlertView.isAnimating){
             calculatorCarAlertView.pauseAnimation()
             carAlertController!!.wasAnimatingBeforePause = true
+        }
+        if (calculatorAmbulanceAlertView.isAnimating){
+            calculatorAmbulanceAlertView.pauseAnimation()
+            ambulanceAlerController!!.wasAnimatingBeforePause = true
         }
         if (bottleLottieView.isAnimating) {
             bottleLottieView.pauseAnimation()
