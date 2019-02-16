@@ -14,6 +14,7 @@ import com.m600.alumnos.cice.vinum.calculatorActivity.tools.*
 import kotlinx.android.synthetic.main.activity_calculator.*
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 class CalculatorActivity : AppCompatActivity(),
     CalculatorGlassSnapOnScrollListener.OnSnapPositionChangeListener,
@@ -264,6 +265,9 @@ class CalculatorActivity : AppCompatActivity(),
         val gradoAlcoholemiaSangre = gradosAlcoholPuro / ( peso * constanteGenero!!)
         var gradoAlcoholemiaAire = gradoAlcoholemiaSangre / 200
         val df= DecimalFormat("#.##")
+        val dfs = DecimalFormatSymbols()
+        dfs.decimalSeparator = '.'
+        df.decimalFormatSymbols = dfs
         df.roundingMode = RoundingMode.CEILING
         gradoAlcoholemiaAire = df.format(gradoAlcoholemiaAire).toDouble()
         calculatorAlcoholCounter.text = String.format("%1\$,.2f mg/l",gradoAlcoholemiaAire)
