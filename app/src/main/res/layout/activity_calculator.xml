@@ -407,6 +407,19 @@
 
 
         </android.support.constraint.ConstraintLayout>
+        <com.airbnb.lottie.LottieAnimationView
+                android:layout_height="0dp"
+                app:lottie_rawRes="@raw/coche_animation"
+                app:lottie_colorFilter="@color/colorAccent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="24dp"
+                android:id="@+id/calculatorCarAlertView"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="@+id/guideline2"
+                app:layout_constraintBottom_toBottomOf="@+id/floatingGlassCard"
+                android:adjustViewBounds="true"
+                app:layout_constraintDimensionRatio="h,1:2" android:scaleType="centerInside"
+                android:layout_width="0dp"/>
 
     </android.support.constraint.ConstraintLayout>
 

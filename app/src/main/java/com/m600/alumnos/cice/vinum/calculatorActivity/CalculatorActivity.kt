@@ -56,6 +56,8 @@ class CalculatorActivity : AppCompatActivity(),
     private var botleAnimationAnimating = false
     private var currentRBState = RBAnimationState.NONE
 
+    private var carAlertController: carAlert? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calculator)
@@ -64,6 +66,7 @@ class CalculatorActivity : AppCompatActivity(),
         regularTypeFace = ResourcesCompat.getFont(this, R.font.roboto)
 
         bottleLottieView.enableMergePathsForKitKatAndAbove(true)
+        carAlertController = carAlert()
 
         calculatorGlassAnimationController = CalculatorGlassAnimationController(this)
         linearLayout = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -246,7 +249,100 @@ class CalculatorActivity : AppCompatActivity(),
         val gradoAlcoholemiaSangre = gradosAlcoholPuro / ( peso * constanteGenero!!)
         val gradoAlcoholemiaAire = gradoAlcoholemiaSangre / 200
         calculatorAlcoholCounter.text = String.format("%1\$,.2f mg/l",gradoAlcoholemiaAire)
+        manageCarAlert(gradoAlcoholemiaAire)
 
+    }
+
+    fun manageCarAlert(nivelAlcolemia: Double){
+        calculatorCarAlertView.pauseAnimation()
+        var currentMaxFrame = 0
+        var currentMinFrame = 0
+        var currentSpeed = 1f
+        when{
+            nivelAlcolemia >= 0.25 -> {
+                when(carAlertController!!.lastState){
+                    carAlert.carState.HIDE ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 0
+                        currentSpeed = 1f
+                    }
+                    carAlert.carState.DANGER ->{
+                        return
+                    }
+                    carAlert.carState.PRECAUTION ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 12
+                        currentSpeed = 1f
+                    }
+                }
+                calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+                calculatorCarAlertView.speed = currentSpeed
+                calculatorCarAlertView.playAnimation()
+                carAlertController!!.lastMaxFrame = currentMaxFrame
+                carAlertController!!.lastMinFrame = currentMinFrame
+                carAlertController!!.lastState = carAlert.carState.DANGER
+
+            }
+            nivelAlcolemia < 0.25 && nivelAlcolemia > 0.00 -> {
+                when(carAlertController!!.lastState){
+                    carAlert.carState.HIDE ->{
+                        currentMaxFrame = 12
+                        currentMinFrame = 0
+                        currentSpeed = 1f
+                    }
+                    carAlert.carState.DANGER ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 12
+                        currentSpeed = -1f
+                    }
+                    carAlert.carState.PRECAUTION ->{
+                        return
+                    }
+                }
+                calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+                calculatorCarAlertView.speed = currentSpeed
+                calculatorCarAlertView.playAnimation()
+                carAlertController!!.lastMaxFrame = currentMaxFrame
+                carAlertController!!.lastMinFrame = currentMinFrame
+                carAlertController!!.lastState = carAlert.carState.PRECAUTION
+
+            }
+            nivelAlcolemia == 0.00 -> {
+                when(carAlertController!!.lastState){
+                    carAlert.carState.HIDE ->{
+                        return
+                    }
+                    carAlert.carState.DANGER ->{
+                        currentMaxFrame = 19
+                        currentMinFrame = 0
+                        currentSpeed = -1f
+                    }
+                    carAlert.carState.PRECAUTION ->{
+                        currentMaxFrame = 12
+                        currentMinFrame = 0
+                        currentSpeed = -1f
+                    }
+                }
+                calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
+                calculatorCarAlertView.speed = currentSpeed
+                calculatorCarAlertView.playAnimation()
+                carAlertController!!.lastMaxFrame = currentMaxFrame
+                carAlertController!!.lastMinFrame = currentMinFrame
+                carAlertController!!.lastState = carAlert.carState.HIDE
+            }
+        }
+    }
+
+    internal class carAlert{
+        var lastMaxFrame = 0
+        var lastMinFrame = 0
+        var lastSpeed = 1f
+        var lastState = carState.HIDE
+        var wasAnimatingBeforePause = false
+
+        enum class carState{
+            HIDE, PRECAUTION, DANGER
+        }
     }
 
     override fun onResume() {
@@ -263,6 +359,10 @@ class CalculatorActivity : AppCompatActivity(),
             }
             currentRBState = RBAnimationState.NONE
         }
+        if (carAlertController!!.wasAnimatingBeforePause){
+            calculatorCarAlertView.playAnimation()
+            carAlertController!!.wasAnimatingBeforePause = false
+        }
 
     }
 
@@ -275,6 +375,10 @@ class CalculatorActivity : AppCompatActivity(),
             }
             calculatorWomanRB.pauseAnimation()
             calculatorManRB.pauseAnimation()
+        }
+        if (calculatorCarAlertView.isAnimating){
+            calculatorCarAlertView.pauseAnimation()
+            carAlertController!!.wasAnimatingBeforePause = true
         }
         if (bottleLottieView.isAnimating) {
             bottleLottieView.pauseAnimation()
