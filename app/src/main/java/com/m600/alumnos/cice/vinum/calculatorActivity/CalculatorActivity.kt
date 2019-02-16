@@ -8,16 +8,12 @@ import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSmoothScroller
 import android.support.v7.widget.LinearSnapHelper
-import android.util.AttributeSet
-import android.util.Log
-import android.widget.Toast
 import com.airbnb.lottie.LottieAnimationView
 import com.m600.alumnos.cice.vinum.R
 import com.m600.alumnos.cice.vinum.calculatorActivity.tools.*
 import kotlinx.android.synthetic.main.activity_calculator.*
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.time.LocalTime
 
 class CalculatorActivity : AppCompatActivity(),
     CalculatorGlassSnapOnScrollListener.OnSnapPositionChangeListener,
@@ -60,14 +56,12 @@ class CalculatorActivity : AppCompatActivity(),
     private var calculatorGlassAnimationController: CalculatorGlassAnimationController? = null
 
     private var botleAnimationAnimating = false
+    private var currentGlassAnimationAnimating = false
     private var currentRBState = RBAnimationState.NONE
 
     private var alertCarController: Alert? = null
     private var alertAmbulanceController: Alert? = null
     private var alertWastedController: Alert? = null
-    private var carAlertController: carAlert? = null
-    private var ambulanceAlerController: ambulanceAlert? = null
-    private var wastedAlertController: wastedAlert? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,9 +71,6 @@ class CalculatorActivity : AppCompatActivity(),
         regularTypeFace = ResourcesCompat.getFont(this, R.font.roboto)
 
         bottleLottieView.enableMergePathsForKitKatAndAbove(true)
-        carAlertController = carAlert()
-        ambulanceAlerController = ambulanceAlert()
-        wastedAlertController = wastedAlert()
         alertCarController = Alert()
         alertAmbulanceController = Alert()
         alertWastedController = Alert()
@@ -135,11 +126,13 @@ class CalculatorActivity : AppCompatActivity(),
 
     }
 
+    // Activo el calculo de alcohol si el peso cambia
     override fun onSnapPesoPositionChange(position: Int) {
         peso = position + 40
         calculateAlcohol()
     }
 
+    //Detecta cuando cambia el numero de copas tomadas
     override fun onSnapPositionChange(position: Int) {
         glassSnapPosition = position
         bottleCounter = position / 7
@@ -148,6 +141,7 @@ class CalculatorActivity : AppCompatActivity(),
         unfillBottle(position)
     }
 
+    //Detecta la direccion y el estado del scroll del recyclerView de las copas
     override fun sendScrollBehaviour(scrolling: Boolean, right: Boolean) {
         when(scrolling){
             true -> {
@@ -159,15 +153,17 @@ class CalculatorActivity : AppCompatActivity(),
                 calculatorGlassAnimationController!!.animateGlass(direction)
             }
             false -> {
-                calculatorGlassAnimationController!!.idleAnimationGlass()
+                calculatorGlassAnimationController!!.idleAnimationGlass(false)
             }
         }
     }
 
+    //Envia un aviso al recyclerview para que actualice sus animaciones, este metodo se activa al cambiar la animacion de las copas
     override fun send() {
         recyclerAdapter!!.updateAnimations()
     }
 
+    //Gestiona la animacion de la botella de vino
     fun unfillBottle(position: Int) {
         bottleLottieView.clearAnimation()
         val bottleQuantity = position % 7
@@ -196,6 +192,7 @@ class CalculatorActivity : AppCompatActivity(),
         calculateAlcohol()
     }
 
+    //Gestiona la seleccion de sexo
     fun selectGenre(genre: Genre){
         if (currentRBState == RBAnimationState.NONE)
             if (genre == selectGenre) return
@@ -227,6 +224,7 @@ class CalculatorActivity : AppCompatActivity(),
 
     }
 
+    //Permite cambiar el peso evitando el scroll del recyclerview, en caso de que se quiera hacerlo con clicks en los botones
     fun changePesoRVNotScrolling(up: Boolean){
         val actualPosition = peso - 40
         when (up){
@@ -245,6 +243,7 @@ class CalculatorActivity : AppCompatActivity(),
         }
     }
 
+    //Calcula el alcohol en aire
     fun calculateAlcohol(){
         if (selectGenre == null){
             val snackbar = Snackbar.make(CalculatorRoot,"Selecciona un genero",Snackbar.LENGTH_LONG)
@@ -269,24 +268,23 @@ class CalculatorActivity : AppCompatActivity(),
         gradoAlcoholemiaAire = df.format(gradoAlcoholemiaAire).toDouble()
         calculatorAlcoholCounter.text = String.format("%1\$,.2f mg/l",gradoAlcoholemiaAire)
 
-        /*if (lastAlcoholCounter < gradoAlcoholemiaAire){
-            manageCarAlert(gradoAlcoholemiaAire)
-            manageAmbulanceAlert(gradoAlcoholemiaAire)
-            manageWastedAlert(gradoAlcoholemiaAire)
+        //La teoria tras esta comprovacion es asegurar que los iconos de alerta aparezcan y desaparezcan en orden, en
+        //la practica ocurre tan deprisa que es casi imperceptible
+        if (lastAlcoholCounter < gradoAlcoholemiaAire){
+            manageAlerts(gradoAlcoholemiaAire, calculatorCarAlertView, alertCarController!!, 2, Pair(0.25, 0.0))
+            manageAlerts(gradoAlcoholemiaAire, calculatorAmbulanceAlertView, alertAmbulanceController!!, 1, Pair(1.0, null))
+            manageAlerts(gradoAlcoholemiaAire, calculatorWastedAnimationView, alertWastedController!!, 2, Pair(2.0, 1.5))
         } else {
-            manageWastedAlert(gradoAlcoholemiaAire)
-            manageAmbulanceAlert(gradoAlcoholemiaAire)
-            manageCarAlert(gradoAlcoholemiaAire)
-        }*/
-
-        manageAlerts(gradoAlcoholemiaAire, calculatorCarAlertView, alertCarController!!, 2, Pair(0.25, 0.0))
-        manageAlerts(gradoAlcoholemiaAire, calculatorAmbulanceAlertView, alertAmbulanceController!!, 1, Pair(1.0, null))
-        manageAlerts(gradoAlcoholemiaAire, calculatorWastedAnimationView, alertWastedController!!, 2, Pair(2.0, 1.5))
+            manageAlerts(gradoAlcoholemiaAire, calculatorWastedAnimationView, alertWastedController!!, 2, Pair(2.0, 1.5))
+            manageAlerts(gradoAlcoholemiaAire, calculatorAmbulanceAlertView, alertAmbulanceController!!, 1, Pair(1.0, null))
+            manageAlerts(gradoAlcoholemiaAire, calculatorCarAlertView, alertCarController!!, 2, Pair(0.25, 0.0))
+        }
 
         lastAlcoholCounter = gradoAlcoholemiaAire
 
     }
 
+    //Gestiona las animaciones de los 3 iconos de alerta
     private fun manageAlerts(nivelAlcolemia: Double, lottieView: LottieAnimationView, alertController: Alert, numberOfStates: Int, separator: Pair<Double, Double?>){
         var currentMaxFrame = 0
         var currentMinFrame = 0
@@ -401,191 +399,12 @@ class CalculatorActivity : AppCompatActivity(),
         alertController.lastMinFrame = currentMinFrame
     }
 
-    fun manageCarAlert(nivelAlcolemia: Double){
-        calculatorCarAlertView.pauseAnimation()
-        var currentMaxFrame = 0
-        var currentMinFrame = 0
-        var currentSpeed = 1f
-        when{
-            nivelAlcolemia >= 0.25 -> {
-                when(carAlertController!!.lastState){
-                    carAlert.carState.HIDE ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 0
-                        currentSpeed = 1f
-                    }
-                    carAlert.carState.DANGER ->{
-                        return
-                    }
-                    carAlert.carState.PRECAUTION ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 12
-                        currentSpeed = 1f
-                    }
-                }
-                carAlertController!!.lastState = carAlert.carState.DANGER
-
-            }
-            nivelAlcolemia < 0.25 && nivelAlcolemia > 0.00 -> {
-                when(carAlertController!!.lastState){
-                    carAlert.carState.HIDE ->{
-                        currentMaxFrame = 12
-                        currentMinFrame = 0
-                        currentSpeed = 1f
-                    }
-                    carAlert.carState.DANGER ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 12
-                        currentSpeed = -1f
-                    }
-                    carAlert.carState.PRECAUTION ->{
-                        return
-                    }
-                }
-                carAlertController!!.lastState = carAlert.carState.PRECAUTION
-
-            }
-            nivelAlcolemia == 0.00 -> {
-                when(carAlertController!!.lastState){
-                    carAlert.carState.HIDE ->{
-                        return
-                    }
-                    carAlert.carState.DANGER ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 0
-                        currentSpeed = -1f
-                    }
-                    carAlert.carState.PRECAUTION ->{
-                        currentMaxFrame = 12
-                        currentMinFrame = 0
-                        currentSpeed = -1f
-                    }
-                }
-                carAlertController!!.lastState = carAlert.carState.HIDE
-            }
-        }
-        calculatorCarAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
-        calculatorCarAlertView.speed = currentSpeed
-        calculatorCarAlertView.playAnimation()
-        carAlertController!!.lastMaxFrame = currentMaxFrame
-        carAlertController!!.lastMinFrame = currentMinFrame
-    }
-
-    fun manageAmbulanceAlert(nivelAlcolemia: Double){
-        calculatorAmbulanceAlertView.pauseAnimation()
-        var currentMaxFrame = 0
-        var currentMinFrame = 0
-        var currentSpeed = 1f
-        when{
-            nivelAlcolemia >= 1.0 -> {
-                when (ambulanceAlerController!!.lastState){
-                    ambulanceAlert.ambulanceState.HIDE ->{
-                        currentMaxFrame = 12
-                        currentMinFrame = 0
-                        currentSpeed = 1f
-                    }
-                    ambulanceAlert.ambulanceState.SHOW ->{
-                        return
-                    }
-                }
-                ambulanceAlerController!!.lastState = ambulanceAlert.ambulanceState.SHOW
-            }
-            nivelAlcolemia < 1.0 -> {
-                when (ambulanceAlerController!!.lastState){
-                    ambulanceAlert.ambulanceState.HIDE ->{
-                        return
-                    }
-                    ambulanceAlert.ambulanceState.SHOW ->{
-                        currentMaxFrame = 12
-                        currentMinFrame = 0
-                        currentSpeed = -1f
-                    }
-                }
-                ambulanceAlerController!!.lastState = ambulanceAlert.ambulanceState.HIDE
-            }
-        }
-        calculatorAmbulanceAlertView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
-        calculatorAmbulanceAlertView.speed = currentSpeed
-        calculatorAmbulanceAlertView.playAnimation()
-        ambulanceAlerController!!.lastMaxFrame = currentMaxFrame
-        ambulanceAlerController!!.lastMinFrame = currentMinFrame
-    }
-
-    fun manageWastedAlert(nivelAlcolemia: Double){
-        calculatorWastedAnimationView.pauseAnimation()
-        var currentMaxFrame = 0
-        var currentMinFrame = 0
-        var currentSpeed = 1f
-        Log.i("ALCOHOL","nivel alcohol, $nivelAlcolemia")
-        when{
-            nivelAlcolemia >= 2.0 -> {
-                when(wastedAlertController!!.lastState){
-                    wastedAlert.wastedState.HIDE ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 0
-                        currentSpeed = 1f
-                    }
-                    wastedAlert.wastedState.TOTALLY ->{
-                        return
-                    }
-                    wastedAlert.wastedState.ALMOST ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 12
-                        currentSpeed = 1f
-                    }
-                }
-                wastedAlertController!!.lastState = wastedAlert.wastedState.TOTALLY
-
-            }
-            nivelAlcolemia < 2.0 && nivelAlcolemia >= 1.5 -> {
-                when(wastedAlertController!!.lastState){
-                    wastedAlert.wastedState.HIDE ->{
-                        currentMaxFrame = 12
-                        currentMinFrame = 0
-                        currentSpeed = 1f
-                    }
-                    wastedAlert.wastedState.TOTALLY ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 12
-                        currentSpeed = -1f
-                    }
-                    wastedAlert.wastedState.ALMOST ->{
-                        return
-                    }
-                }
-                wastedAlertController!!.lastState = wastedAlert.wastedState.ALMOST
-
-            }
-            nivelAlcolemia < 1.50 -> {
-                when(wastedAlertController!!.lastState){
-                    wastedAlert.wastedState.HIDE ->{
-                        return
-                    }
-                    wastedAlert.wastedState.TOTALLY ->{
-                        currentMaxFrame = 19
-                        currentMinFrame = 0
-                        currentSpeed = -1f
-                    }
-                    wastedAlert.wastedState.ALMOST ->{
-                        currentMaxFrame = 12
-                        currentMinFrame = 0
-                        currentSpeed = -1f
-                    }
-                }
-                wastedAlertController!!.lastState = wastedAlert.wastedState.HIDE
-            }
-        }
-        calculatorWastedAnimationView.setMinAndMaxFrame(currentMinFrame, currentMaxFrame)
-        calculatorWastedAnimationView.speed = currentSpeed
-        calculatorWastedAnimationView.playAnimation()
-        wastedAlertController!!.lastMaxFrame = currentMaxFrame
-        wastedAlertController!!.lastMinFrame = currentMinFrame
-    }
-
+    //Define los 3 estados en los que pueden estar los iconos de alerta
     enum class alerState{
         HIDE, MEDIUM, TOTAL
     }
 
+    //Define las propiedades de cada uno de los tres iconos de alerta
     internal class Alert{
         var lastMaxFrame = 0
         var lastMinFrame = 0
@@ -594,47 +413,16 @@ class CalculatorActivity : AppCompatActivity(),
         var wasAnimatingBeforePause = false
     }
 
-    internal class carAlert{
-        var lastMaxFrame = 0
-        var lastMinFrame = 0
-        var lastSpeed = 1f
-        var lastState = carState.HIDE
-        var wasAnimatingBeforePause = false
-
-        enum class carState{
-            HIDE, PRECAUTION, DANGER
-        }
-    }
-
-    internal class ambulanceAlert{
-        var lastMaxFrame = 0
-        var lastMinFrame = 0
-        var lastSpeed = 1f
-        var lastState = ambulanceState.HIDE
-        var wasAnimatingBeforePause = false
-
-        enum class ambulanceState{
-            HIDE, SHOW
-        }
-    }
-
-    internal class wastedAlert{
-        var lastMaxFrame = 0
-        var lastMinFrame = 0
-        var lastSpeed = 1f
-        var lastState = wastedState.HIDE
-        var wasAnimatingBeforePause = false
-
-        enum class wastedState{
-            HIDE, ALMOST, TOTALLY
-        }
-    }
-
+    //Se reanudan las animaciones que estaban activas cuando se pauso la activity
     override fun onResume() {
         super.onResume()
         if (botleAnimationAnimating){
             bottleLottieView.resumeAnimation()
             botleAnimationAnimating = false
+        }
+        if (currentGlassAnimationAnimating){
+            calculatorGlassAnimationController!!.idleAnimationGlass(true)
+            currentGlassAnimationAnimating = false
         }
         if (currentRBState != RBAnimationState.NONE){
             when(currentRBState){
@@ -644,23 +432,28 @@ class CalculatorActivity : AppCompatActivity(),
             }
             currentRBState = RBAnimationState.NONE
         }
-        if (carAlertController!!.wasAnimatingBeforePause){
+        if (alertCarController!!.wasAnimatingBeforePause){
             calculatorCarAlertView.playAnimation()
-            carAlertController!!.wasAnimatingBeforePause = false
+            alertCarController!!.wasAnimatingBeforePause = false
         }
-        if (ambulanceAlerController!!.wasAnimatingBeforePause){
+        if (alertAmbulanceController!!.wasAnimatingBeforePause){
             calculatorAmbulanceAlertView.playAnimation()
-            ambulanceAlerController!!.wasAnimatingBeforePause = false
+            alertAmbulanceController!!.wasAnimatingBeforePause = false
         }
-        if (wastedAlertController!!.wasAnimatingBeforePause){
+        if (alertWastedController!!.wasAnimatingBeforePause){
             calculatorWastedAnimationView.playAnimation()
-            wastedAlertController!!.wasAnimatingBeforePause = false
+            alertWastedController!!.wasAnimatingBeforePause = false
         }
 
     }
 
+    //Se pausan todas las animaciones activas, esto es necesario para evitar posibles errores al enviar la activity al background
+    //Podrian darse errores al cerrarla completamente, pero para evitar esto se implementa onDestroy
     override fun onPause() {
-        recyclerAdapter!!.cancelAnimations()
+        if (recyclerAdapter!!.isCurrentPositionAnimationPlaying(glassSnapPosition)){
+            currentGlassAnimationAnimating = true
+        }
+        recyclerAdapter!!.cancelAnimations(false)
         if (calculatorWomanRB.isAnimating || calculatorManRB.isAnimating){
             when(selectGenre){
                 Genre.WOMAN -> currentRBState = RBAnimationState.SELECT_WOMAN
@@ -671,20 +464,30 @@ class CalculatorActivity : AppCompatActivity(),
         }
         if (calculatorCarAlertView.isAnimating){
             calculatorCarAlertView.pauseAnimation()
-            carAlertController!!.wasAnimatingBeforePause = true
+            alertCarController!!.wasAnimatingBeforePause = true
         }
         if (calculatorAmbulanceAlertView.isAnimating){
             calculatorAmbulanceAlertView.pauseAnimation()
-            ambulanceAlerController!!.wasAnimatingBeforePause = true
+            alertAmbulanceController!!.wasAnimatingBeforePause = true
         }
         if (calculatorWastedAnimationView.isAnimating){
             calculatorWastedAnimationView.pauseAnimation()
-            wastedAlertController!!.wasAnimatingBeforePause = true
+            alertWastedController!!.wasAnimatingBeforePause = true
         }
         if (bottleLottieView.isAnimating) {
             bottleLottieView.pauseAnimation()
             botleAnimationAnimating = true
         }
         super.onPause()
+    }
+
+    //Se cancelan(destruyen) todas las animaciones, para evitar errores una vez la activity se cierre completamente
+    override fun onDestroy() {
+        recyclerAdapter!!.cancelAnimations(true)
+        calculatorCarAlertView!!.cancelAnimation()
+        calculatorWastedAnimationView!!.cancelAnimation()
+        calculatorAmbulanceAlertView!!.cancelAnimation()
+        bottleLottieView!!.cancelAnimation()
+        super.onDestroy()
     }
 }

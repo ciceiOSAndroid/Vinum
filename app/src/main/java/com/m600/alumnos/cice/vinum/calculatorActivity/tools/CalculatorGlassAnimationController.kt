@@ -1,6 +1,5 @@
 package com.m600.alumnos.cice.vinum.calculatorActivity.tools
 
-import android.util.Log
 import com.airbnb.lottie.LottieAnimationView
 
 class CalculatorGlassAnimationController(val changeListener: CurrentFrameChange) {
@@ -9,6 +8,9 @@ class CalculatorGlassAnimationController(val changeListener: CurrentFrameChange)
         fun send()
     }
 
+    //Todas las animaciones de las copas son en realidad una "unica" instancia, para que todas realicen lo mismo
+    //Esto puede ser ineficiente cuando solo se esta moviendo 1 dentro del circulo sin cambiar de copa (poco frecuente)
+    //Pero es necesario para que al hacer scroll todas las demas copas tengan el mismo movimiento
     companion object {
         var currentFrame: Int = 0
         var currentMaxFrame: Int = 10
@@ -31,6 +33,7 @@ class CalculatorGlassAnimationController(val changeListener: CurrentFrameChange)
         }
     }
 
+    //Aqui se anima la copa en funcion de la direccion del scroll
     fun animateGlass(direction : DirectionEnum) {
 
         when (direction){
@@ -71,8 +74,9 @@ class CalculatorGlassAnimationController(val changeListener: CurrentFrameChange)
         changeListener.send()
     }
 
-    fun idleAnimationGlass(){
-        if (lastState == StateEnum.IDlE) return
+    //Aqui la copa se anima de nuevo al estado de reposo
+    fun idleAnimationGlass(resumingAnimation: Boolean){
+        if (lastState == StateEnum.IDlE && !resumingAnimation) return
         when (lastState){
             StateEnum.SCROLLING_LEFT -> {
                 currentMinFrame = MIN_GLOBAL_FRAME

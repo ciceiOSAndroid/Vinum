@@ -26,6 +26,7 @@ class CalculatorGlassSnapOnScrollListener (
 
     private var snapPosition = RecyclerView.NO_POSITION
 
+    //Detecta y envia cuando el scroll esta moviendose
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         if (behavior == Behavior.NOTIFY_ON_SCROLL) {
             maybeNotifySnapPositionChange(recyclerView)
@@ -37,6 +38,7 @@ class CalculatorGlassSnapOnScrollListener (
         }
     }
 
+    //Detecta y envia cuando el scroll cambia de estado, de parado a Idle son los utilizados principalmente
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         if (behavior == Behavior.NOTIFY_ON_SCROLL_STATE_IDLE
             && newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -48,6 +50,7 @@ class CalculatorGlassSnapOnScrollListener (
         }
     }
 
+    //Envia la posicion del elemento visible actualmente
     private fun maybeNotifySnapPositionChange(recyclerView: RecyclerView) {
         val snapView = snapHelper.findSnapView(recyclerView.layoutManager)
         val snapPosition = layoutManager.getPosition(snapView!!)

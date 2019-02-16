@@ -2,6 +2,7 @@ package com.m600.alumnos.cice.vinum.calculatorActivity.tools
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,21 +32,30 @@ class CalculatorGlassRecyclerAdapter(val context: Context): RecyclerView.Adapter
 
     }
 
+    //Sincroniza las animaciones de todas las copas
     fun updateAnimations(){
         listOfViewHolders.forEach { t, u ->
             CalculatorGlassAnimationController.syncWithFrame(u.image)
         }
     }
 
-    fun cancelAnimations(){
-        listOfViewHolders.forEach { t, u ->
-            u.image.cancelAnimation()
-        }
+    //Comprueba si la copa actualmente visible esta siendo animada
+    fun isCurrentPositionAnimationPlaying(position: Int): Boolean{
+        return listOfViewHolders[position]!!.image.isAnimating
     }
 
-    fun restAnimation(position: Int){
-        val lottieView = listOfViewHolders[position]!!.image
-        CalculatorGlassAnimationController.syncWithFrame(lottieView)
+
+    //Pausa o cancela todas las animaciones
+    fun cancelAnimations(destroy: Boolean){
+        if (destroy){
+            listOfViewHolders.forEach { t, u ->
+                u.image.cancelAnimation()
+            }
+        } else {
+            listOfViewHolders.forEach { t, u ->
+                u.image.pauseAnimation()
+            }
+        }
     }
 
     class CalculatorViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){

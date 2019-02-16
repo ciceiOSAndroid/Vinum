@@ -359,8 +359,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@+id/calculatorPesoLabel"
-                    app:layout_constraintBottom_toBottomOf="parent"
-            >
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                 <android.support.v7.widget.RecyclerView
                         android:layout_width="match_parent"
@@ -407,6 +406,7 @@
 
 
         </android.support.constraint.ConstraintLayout>
+
         <com.airbnb.lottie.LottieAnimationView
                 android:layout_height="0dp"
                 app:lottie_rawRes="@raw/coche_animation"
@@ -421,6 +421,7 @@
                 app:layout_constraintDimensionRatio="h,1:2"
                 android:scaleType="centerInside"
                 android:layout_width="0dp"/>
+
         <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -435,6 +436,7 @@
                 android:adjustViewBounds="true"
                 android:scaleType="centerInside"
                 app:layout_constraintDimensionRatio="h,1:2"/>
+
         <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="0dp"
                 android:layout_height="0dp"

@@ -12,6 +12,8 @@ class CalculatorCustomCardView @JvmOverloads constructor(context: Context, attri
     private var radiusComputed = 0f
     private var radiusSet = false
 
+    //Aqui se auto implementa la altura de la cardview de las copas en funcion de la altura, tambien se fija el radio de sus bordes
+    //Correcto para que siga siendo un circulo
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         layoutParams.height = View.MeasureSpec.getSize(widthMeasureSpec)
