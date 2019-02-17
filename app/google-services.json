@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "395227274626-amas507cv9d286aqg1k660oo844rdp84.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.m600.alumnos.cice.vinum",
+            "certificate_hash": "c3a5d192e4471e160f4d3f78a3f5b1114fa6e11a"
+          }
+        },
+        {
           "client_id": "395227274626-hlos0o0mft4vp0cp75hb3vrg6th25fm1.apps.googleusercontent.com",
           "client_type": 3
         }
