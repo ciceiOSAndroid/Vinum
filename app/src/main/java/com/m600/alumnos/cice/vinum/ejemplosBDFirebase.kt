@@ -8,7 +8,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import android.view.View
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_ejemplosbd.*
 
 
 /**
@@ -153,7 +153,7 @@ class ejemplosBDFirebase : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         FirebaseApp.initializeApp(this) /**[1] & [2]**/
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_ejemplosbd)
 
         // [-----------------<| BD FIREBASE |>-----------------] //
         /**[1]**/
