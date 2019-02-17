@@ -18,7 +18,7 @@ import kotlin.collections.ArrayList
 open class BD {
 
     // Se declara e incializa el array encargado de almacenar los objetos << Vino >>
-    val vinoObjects:ArrayList<Vino> ?= arrayListOf()
+    val vinoObjects:ArrayList<Vino2> ?= arrayListOf()
 
     // Almacenará la URL que referencia a la foto que se acaba de subir
     var urlImagen:String ?= null
@@ -26,20 +26,6 @@ open class BD {
     // Numero de vinos de la base de datos
     var numeroVinos: Long ?= null
 
-
-
-    /**
-     * Se encarga de devolver el arrayVinos<Vino>, con el objetivo de comprobar su estado, ya que dentro del método
-     * << cargarVinos() >> hay una tarea asincronada añadiendo los objetos al arrayVinos<Vino>
-     * y tiene cierto delay al cargar sus correspondientes fotografias.
-     * @return ArrayList<Vino>?
-     */
-    fun comprobarImagenes(): ArrayList<Vino>? {
-
-        Log.i("VINUMLOG", "Tamaño actual: ${vinoObjects!!.size}")
-            return vinoObjects
-
-    }
 
     /**
      * Método que va en << onDataChange >> encargado de generar los objetos << Vino >>
@@ -74,7 +60,7 @@ open class BD {
                     //Obtenemos la información de ellos
 
                     val vinoActual = itemsIterator.next()
-                    val vino = Vino()
+                    val vino = Vino2()
 
                     val map = vinoActual.value as HashMap<String, Any>
 
@@ -182,7 +168,7 @@ open class BD {
      */
 
 
-    fun guardarVino(FirebaseBD: DatabaseReference, vino: Vino):Pair<String, Boolean>{
+    fun guardarVino(FirebaseBD: DatabaseReference, vino: Vino2):Pair<String, Boolean>{
 
         //Obtiene el año actual para comprobar que no se meta un año imposible
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)

@@ -1,31 +1,38 @@
 package com.m600.alumnos.cice.vinum
 
-import android.graphics.Bitmap
+import android.os.Parcel
+import android.os.Parcelable
+import java.util.ArrayList
 
+class Vino constructor(val name: String,
+                       val features: ArrayList<String> = ArrayList<String>()
+): Parcelable {
 
-class Vino {
+    constructor(source: Parcel) : this(
+        source.readString(),
+        source.createStringArrayList()
+    )
 
-
-
-    companion object Factory{
-
-        fun create():Vino = Vino()
-
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+        dest!!.writeString(name)
+        dest.writeStringList(features)
     }
 
-    //var ID: String ?= null
-    var nombre: String ?= null
-    var anio: Long ?= null
-    var uva: String ?= null
-    var grados: String ?= null
-    var origen: String ?= null
-    var bodega: String ?= null
-    var descripcion: String ?= null
-    var puntuacion: Long ?= null
-    var imagen: Bitmap ?= null
-    //Almacena la URL de la cual se obtendrá la imagen
-    var imagenUrl: String ?= null
+    override fun describeContents(): Int {
+        return 0
+    }
 
+    companion object CREATOR: Parcelable.Creator<Vino>{
+        override fun createFromParcel(source: Parcel?): Vino {
+            return Vino(source!!)
+        }
 
+        override fun newArray(size: Int): Array<Vino?> {
+            return arrayOfNulls(size)
+        }
+
+    }
+    //tarea lista vacia por eso declara, tiene un valor por defecto, si lo paso utiliza el pasado
+    //guarda en shared preferences
 
 }

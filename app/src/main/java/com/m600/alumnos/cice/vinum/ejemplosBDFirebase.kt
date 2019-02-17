@@ -157,13 +157,13 @@ class ejemplosBDFirebase : AppCompatActivity() {
 
         // [-----------------<| BD FIREBASE |>-----------------] //
         /**[1]**/
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-        /**[1]**/
         FirebaseBD = FirebaseDatabase.getInstance().reference //Se obtiene la referencia
         /**[1]**/
         FirebaseBD.orderByKey().addValueEventListener(taskListener)
         /**[1 & 2]**/
         BD_vinos = BD()
+
+
 
         // [---------------------------------------------------] //
 
@@ -229,7 +229,7 @@ class ejemplosBDFirebase : AppCompatActivity() {
                         //Ejmplo de subida de un vino se podra gestionar como se desee:
 
                         /**[2] - [EJ]**/ // Se declara un nuevo vino
-                        val vino = Vino()
+                        val vino = Vino2()
 
                         /**[2] - [EJ]**/ //Se añaden al menos sus elementos obligatorios
                         vino.nombre = nombreVino.text.toString()
