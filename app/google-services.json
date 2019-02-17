@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "395227274626",
+    "firebase_url": "https://vinum-9b17f.firebaseio.com",
+    "project_id": "vinum-9b17f",
+    "storage_bucket": "vinum-9b17f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:395227274626:android:20169e738555f0da",
+        "android_client_info": {
+          "package_name": "com.m600.alumnos.cice.vinum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "395227274626-movda6i0v2kl0ervf95khsq8q3nvqdd8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.m600.alumnos.cice.vinum",
+            "certificate_hash": "f4b5f433511a93a41f1b5a4d5afbb17d69b8bc7b"
+          }
+        },
+        {
+          "client_id": "395227274626-amas507cv9d286aqg1k660oo844rdp84.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.m600.alumnos.cice.vinum",
+            "certificate_hash": "c3a5d192e4471e160f4d3f78a3f5b1114fa6e11a"
+          }
+        },
+        {
+          "client_id": "395227274626-hlos0o0mft4vp0cp75hb3vrg6th25fm1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAaSLFixYI4eXDa-3v3wkxPslQ6keSLCXM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "395227274626-hlos0o0mft4vp0cp75hb3vrg6th25fm1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
