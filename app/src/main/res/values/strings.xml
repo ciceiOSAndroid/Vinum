@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Vinum</string>
+    <string name="textView">descripción</string>
+    <string name="todo">TODO</string>
+    <string name="vinoTitle">Título</string>
+    <string name="vinoDescripcion">Descripción</string>
+    <string name="vinoPrice">0 €</string>
     <string name="title_activity_maps">Map</string>
     <string name="click_photo_vinum">*Click Photo Vinum*</string>
     <string name="a_adir_vino">AÑADIR VINO</string>
