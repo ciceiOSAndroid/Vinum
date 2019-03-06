@@ -9,4 +9,17 @@
     <string name="click_photo_vinum">*Click Photo Vinum*</string>
     <string name="a_adir_vino">AÑADIR VINO</string>
     <string name="toma_tu_foto_si_te_gusta_a_ade_tu_vinum">Toma tu foto. Si te gusta, añade tu Vinum</string>
+    <string name="variedad_de_uva">Variedad de uva</string>
+    <string name="a_o">Año *</string>
+    <string name="bodega">Bodega *</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="descripci_n">Descripción *</string>
+    <string name="origen">Origen *</string>
+    <string name="nombre_del_vino">Nombre del vino *</string>
+    <string name="agregar">Agregar</string>
+    <string name="_0">0º</string>
+    <string name="graduaci_n_alcoh_lica">Graduación alcohólica</string>
+    <string name="valoraci_n">Valoración</string>
+    <string name="description">Description</string>
+    <string name="a_adir_nuevo_vino">Añadir nuevo vino</string>
 </resources>

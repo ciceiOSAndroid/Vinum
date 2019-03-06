@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 tools:context=".AgregarVinosActivity">
+
+    <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            <!-- app:expandedTitleTextAppearance="@color/colorTransparent"
+            -->
+
+
+            <ImageView
+                    android:id="@+id/vino_IV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:cropToPadding="true"
+                    android:scaleType="centerCrop"
+                    app:layout_collapseMode="parallax"
+                    android:contentDescription="@string/description"/>
+
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/fondo"
+            android:padding="20dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                    android:id="@+id/titulo_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/a_adir_nuevo_vino"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="24sp"
+                    android:textStyle="bold"/>
+
+            <EditText
+                    android:id="@+id/nombre_ET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/titulo_TV"
+                    android:layout_marginBottom="10dp"
+                    android:hint="@string/nombre_del_vino"
+                    android:inputType="text"/>
+
+            <EditText
+                    android:id="@+id/uva_ET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/nombre_ET"
+                    android:layout_marginBottom="20dp"
+                    android:hint="@string/variedad_de_uva"
+                    android:inputType="text"/>
+
+
+            <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/a_o"
+                    android:textSize="18sp"
+                    android:layout_below="@id/uva_ET"/>
+
+            <Spinner
+                    android:id="@+id/fecha_ET"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textView2"
+                    android:layout_marginBottom="20dp"
+            />
+
+            <TextView
+                    android:id="@+id/titulo2_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_below="@id/fecha_ET"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/graduaci_n_alcoh_lica"
+                    android:textSize="18sp"/>
+
+            <SeekBar
+                    android:id="@+id/graduacion_SB"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_below="@id/titulo2_TV"
+                    android:layout_marginEnd="0dp"
+                    android:layout_toStartOf="@+id/resultado_TV"
+                    android:max="100"/>
+
+            <TextView
+                    android:id="@+id/resultado_TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_below="@id/titulo2_TV"
+                    android:layout_alignEnd="@id/titulo2_TV"
+                    android:gravity="center"
+                    android:text="@string/_0"
+                    android:textSize="18sp"/>
+
+            <EditText
+                    android:id="@+id/origen_ET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/resultado_TV"
+                    android:layout_marginBottom="10dp"
+                    android:ems="10"
+                    android:hint="@string/origen"
+                    android:inputType="text"
+            />
+
+            <EditText
+                    android:id="@+id/bodega_ET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/origen_ET"
+                    android:layout_marginBottom="10dp"
+                    android:ems="10"
+                    android:hint="@string/bodega"
+                    android:inputType="text"/>
+
+            <EditText
+                    android:id="@+id/descripcion_ET"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/bodega_ET"
+                    android:layout_marginBottom="20dp"
+                    android:ems="10"
+                    android:hint="@string/descripci_n"
+                    android:inputType="textMultiLine"
+            />
+
+            <TextView
+                    android:id="@+id/titulo3_TV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/descripcion_ET"
+                    android:layout_marginBottom="20dp"
+                    android:text="@string/valoraci_n"
+                    android:textSize="18sp"/>
+
+            <RatingBar
+                    android:id="@+id/ratingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/titulo3_TV"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="20dp"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    android:rating="0"
+                    android:stepSize="1"/>
+
+            <Button
+                    android:id="@+id/agregarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ratingBar"
+                    android:layout_alignEnd="@id/ratingBar"
+                    android:background="@color/colorPrimary"
+                    android:onClick="agregarVino"
+                    android:text="@string/agregar"
+                    android:textColor="@android:color/white"/>
+
+            <Button
+                    android:id="@+id/cancelarButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/ratingBar"
+                    android:layout_alignStart="@id/ratingBar"
+                    android:background="@color/colorPrimary"
+                    android:text="@string/cancelar"
+                    android:textColor="@android:color/white" android:onClick="cancelarAction"/>
+
+
+        </RelativeLayout>
+
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</android.support.design.widget.CoordinatorLayout>
