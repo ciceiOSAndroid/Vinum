@@ -190,7 +190,7 @@ class CameraVinumActivity : AppCompatActivity() {
      */
     fun AgregarPhotoButton(view: View) {
         if(imagenes.size>0) {
-            //val intent = Intent(this, AgregarVinosActivity::class.java)
+            val intent = Intent(this, AgregarVinosActivity::class.java)
             intent.putExtra("codigo", "photo")
             intent.putParcelableArrayListExtra("imageUri", imagenes)
             startActivity(intent)

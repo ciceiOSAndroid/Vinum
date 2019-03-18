@@ -19,6 +19,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:windowSoftInputMode="adjustResize"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
@@ -49,6 +50,9 @@
                 android:name=".MapsActivity"
                 android:label="@string/title_activity_maps">
         </activity>
+        <activity
+                android:name=".AgregarVinosActivity"
+                android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".CameraVinumActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
